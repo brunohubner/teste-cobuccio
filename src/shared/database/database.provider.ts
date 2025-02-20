@@ -11,11 +11,11 @@ export const databaseProviders = [
     useFactory: async () => {
       const sequelize = new Sequelize({
         dialect: 'postgres',
-        host: process.env.SEQ_SQLDB_HOST,
-        port: Number(process.env.SEQ_SQLDB_PORT),
-        username: process.env.SEQ_SQLDB_USER,
-        password: process.env.SEQ_SQLDB_PASSWORD,
-        database: process.env.SEQ_SQLDB_DATABASE,
+        host: process.env.DB_HOST,
+        port: Number(process.env.DB_PORT),
+        username: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
         models: [modelsPath],
         logging: process.env.SEQ_LOGGING?.toLowerCase() === 'true',
       });

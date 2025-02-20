@@ -20,15 +20,28 @@ class HealthResponse {
 }
 
 @ApiTags('Health')
-@Controller('health')
+@Controller()
 export class HealthController {
   @ApiResponse({
     status: statusCode,
     description: message,
     type: HealthResponse,
   })
+  @Get('health')
+  async GET_Health() {
+    return {
+      statusCode,
+      message,
+    };
+  }
+
+  @ApiResponse({
+    status: statusCode,
+    description: message,
+    type: HealthResponse,
+  })
   @Get()
-  async getHealth() {
+  async GET_Index() {
     return {
       statusCode,
       message,

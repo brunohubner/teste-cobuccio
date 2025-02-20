@@ -40,6 +40,5 @@ lerna-debug.log*
 /tmp/
 !.tool-versions
 
-/data/*
-!/data/.gitkeep
+/.postgres-data
 

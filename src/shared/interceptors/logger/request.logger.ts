@@ -1,5 +1,4 @@
 import { createLogger } from 'winston';
-import { maskBody } from './logger.mask';
 import { winstonConfig } from '@/config/winston.config';
 
 const logger = createLogger(winstonConfig);
@@ -11,7 +10,7 @@ export const requestLog = (req: any, className: string) => {
       method: req.method,
       url: req.url,
       from: req.ip,
-      body: maskBody(req.body),
+      body: req.body,
       query: req.query,
       params: req.params,
     }),

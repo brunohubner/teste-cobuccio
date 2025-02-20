@@ -18,8 +18,8 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const colorYellow = (text: string) => (isProd ? text : clc.yellow(text));
 
-const customFormat = winston.format((info, opts = {}) => {
-  const stripped = { ...info };
+const customFormat = winston.format((info, opts: any = {}) => {
+  const stripped = { ...info } as any;
 
   delete stripped[LEVEL];
   delete stripped[MESSAGE];

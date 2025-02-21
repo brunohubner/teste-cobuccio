@@ -6,6 +6,7 @@ import User from '@/shared/models/user.model';
 import { HttpException } from '@/shared/errors/http/http-exception.error';
 import Transaction from '@/shared/models/transaction.model';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
+import { JwtUser } from '@/shared/types/jwt-user.type';
 
 @Injectable()
 export class TransactionService {
@@ -16,22 +17,24 @@ export class TransactionService {
     private readonly transactionRepository: typeof Transaction,
   ) { }
 
-  async createTransaction({
-    sender_id,
-    receiver_id,
-    amount,
-  }: CreateTransactionDto) {
+  async createTransaction(
+    {
+      receiver_cpf,
+      amount,
+    }: CreateTransactionDto,
+    user: JwtUser,
+  ) {
     const result = await this.transactionRepository.sequelize.transaction(async (t) => {
-      const sender = await User.findByPk(sender_id, { transaction: t });
-      const receiver = await User.findByPk(receiver_id, { transaction: t });
-
-      if (!sender) {
-        throw this.httpException.badRequest('Sender não encontrado');
-      }
+      const receiver = await User.findOne({
+        where: { cpf: receiver_cpf },
+        transaction: t,
+      });
 
       if (!receiver) {
         throw this.httpException.badRequest('Receiver não encontrado');
       }
+
+      const sender_id = user.userId;
 
       const senderBalance = await this.getBalance(sender_id, t);
 
@@ -64,7 +67,7 @@ export class TransactionService {
 
       const transactionModel: Partial<Transaction> = {
         sender_id,
-        receiver_id,
+        receiver_id: receiver.id,
         amount,
         status: 'completed',
         previoushash: lastSenderTransaction ? lastSenderTransaction.hash : '0',
@@ -80,8 +83,8 @@ export class TransactionService {
         transaction_id: transactionJson.id,
         hash: transactionJson.hash,
         transaction_amount: transactionJson.amount,
-        sender_name: sender.person_name,
-        sender_id: sender.id,
+        sender_name: user.person_name,
+        sender_id: user.userId,
         receiver_name: receiver.person_name,
         receiver_id: receiver.id,
       };
@@ -90,12 +93,12 @@ export class TransactionService {
     return result;
   }
 
-  async getBalance(user_id: string, t: SequelizeTransaction): Promise<number> {
+  async getBalance(user_id: string, t: SequelizeTransaction = null): Promise<number> {
     const sql = `--sql
       SELECT
         COALESCE(SUM(CASE WHEN receiver_id = :user_id THEN amount ELSE 0 END), 0)
         - COALESCE(SUM(CASE WHEN sender_id = :user_id THEN amount ELSE 0 END), 0)
-      AS balance FROM transactions WHERE status = 'COMPLETED';`;
+      AS balance FROM transaction WHERE status = 'completed';`;
 
     const result: any[] = await this.transactionRepository.sequelize.query(sql, {
       replacements: { user_id },
@@ -103,7 +106,7 @@ export class TransactionService {
       transaction: t,
     });
 
-    return result[0].balance as number;
+    return Number(result[0].balance) as number;
   }
 
   static generateHash(transaction: Partial<Transaction>): string {

@@ -2,21 +2,27 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   Post,
+  Req,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Request } from 'express';
 import { API_RESPONSES } from '@/shared/constants/api-responses.const';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateUserSwaggerResponse } from './swagger/create-user.swagger';
 import { SigninDto } from './dtos/signin.dto';
+import { AuthGuard } from '@/shared/auth/auth.guard';
 
 @ApiTags('Usuarios')
 @Controller('/api/v1/user')
@@ -63,6 +69,33 @@ export class UserController {
   @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)
   async POST_Signin(@Body() body: SigninDto) {
     const data = await this.userService.signIn(body);
+
+    return { data };
+  }
+
+  @Get('balance')
+  @HttpCode(200)
+  @UsePipes(ValidationPipe)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Consulta o saldo do usuário logado',
+    description: 'Consulta o saldo do usuário logado',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Saldo consultado com sucesso',
+    type: Object,
+  })
+  @ApiResponse(API_RESPONSES.BAD_REQUEST)
+  @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)
+  @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)
+  async GET_Balance(
+  @Req() { decodedJwt }: Request,
+  ) {
+    const { user } = decodedJwt;
+
+    const data = await this.userService.getBalance(user);
 
     return { data };
   }

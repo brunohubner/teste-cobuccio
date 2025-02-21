@@ -3,17 +3,21 @@ import {
   IsNumber,
   Min,
   Max,
-  IsUUID,
+  IsString,
+  Validate,
+  Matches,
 } from 'class-validator';
+import { REGEX } from '@/shared/constants/regex.const';
+import { IsValidCPF } from '@/shared/decorators/is-cpf.decorator';
 
 export class CreateTransactionDto {
-  @ApiProperty()
-  @IsUUID()
-    sender_id: string;
-
-  @ApiProperty()
-  @IsUUID()
-    receiver_id: string;
+  @ApiProperty({ example: '12345678909' })
+  @IsString()
+  @Validate(IsValidCPF, {
+    message: 'CPF matematicamente inválido',
+  })
+  @Matches(REGEX.CPF_WITHOUT_MASK, { message: 'Formato de CPF inválido' })
+    receiver_cpf: string;
 
   @ApiProperty()
   @IsNumber({

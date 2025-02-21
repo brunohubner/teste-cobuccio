@@ -8,6 +8,8 @@ import { HttpException } from '@/shared/errors/http/http-exception.error';
 import { CreateUserSwaggerData } from './swagger/create-user.swagger';
 import { SigninDto } from './dtos/signin.dto';
 import { AuthService } from '@/shared/auth/auth.service';
+import { TransactionService } from '../transaction/transaction.service';
+import { JwtUser } from '@/shared/types/jwt-user.type';
 
 @Injectable()
 export class UserService {
@@ -17,6 +19,7 @@ export class UserService {
     @Inject(User.name)
     private readonly userRepository: typeof User,
     private readonly authService: AuthService,
+    private readonly transactionService: TransactionService,
   ) { }
 
   async signUp(dto: CreateUserDto): Promise<CreateUserSwaggerData> {
@@ -112,6 +115,15 @@ export class UserService {
 
     return {
       jwt,
+    };
+  }
+
+  async getBalance(user: JwtUser) {
+    const balance = await this.transactionService.getBalance(user.userId);
+
+    return {
+      ...user,
+      balance,
     };
   }
 }

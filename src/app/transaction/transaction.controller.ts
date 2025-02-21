@@ -55,15 +55,7 @@ export class TransactionController {
   ) {
     const { user } = decodedJwt;
 
-    if (user.userId !== body.sender_id) {
-      throw this.httpException.forbidden('Usuário não autorizado');
-    }
-
-    if (user.userId === body.receiver_id) {
-      throw this.httpException.badRequest('Não é possível enviar dinheiro para si mesmo');
-    }
-
-    const data = await this.transactionService.createTransaction(body);
+    const data = await this.transactionService.createTransaction(body, user);
 
     return { data };
   }

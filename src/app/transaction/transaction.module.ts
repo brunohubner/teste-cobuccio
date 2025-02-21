@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TransactionController } from './transaction.controller';
 import { AuthModule } from '@/shared/auth/auth.module';
 import { TransactionService } from './transaction.service';
@@ -10,7 +10,8 @@ import { UserModule } from '../user/user.module';
   imports: [
     HttpExceptionModule,
     AuthModule,
-    UserModule,
+
+    forwardRef(() => UserModule),
   ],
   controllers: [TransactionController],
   providers: [...TransactionProvider, TransactionService],

@@ -23,6 +23,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateUserSwaggerResponse } from './swagger/create-user.swagger';
 import { SigninDto } from './dtos/signin.dto';
 import { AuthGuard } from '@/shared/auth/auth.guard';
+import { GetUserBalanceSwaggerResponse } from './swagger/get-balance.swagger';
 
 @ApiTags('Usuarios')
 @Controller('/api/v1/user')
@@ -85,7 +86,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Saldo consultado com sucesso',
-    type: Object,
+    type: GetUserBalanceSwaggerResponse,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
   @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)

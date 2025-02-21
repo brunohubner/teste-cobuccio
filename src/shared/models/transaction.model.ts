@@ -15,7 +15,9 @@ import User from './user.model';
 export type TransactionStatus = 'pending' | 'completed' | 'cancelled' | 'rejected';
 
 @Scopes(() => ({}))
-@Table({ schema: 'public', tableName: 'transaction', updatedAt: false })
+@Table({
+  schema: 'public', tableName: 'transaction', updatedAt: false, createdAt: false,
+})
 export default class Transaction extends Model<Transaction> {
   @Column({
     defaultValue: DataType.UUIDV4,

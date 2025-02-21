@@ -7,6 +7,7 @@ import { HttpException } from '@/shared/errors/http/http-exception.error';
 import Transaction from '@/shared/models/transaction.model';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { JwtUser } from '@/shared/types/jwt-user.type';
+import { CreateTransactionSwaggerData } from './swagger/create-transaction.swagger';
 
 @Injectable()
 export class TransactionService {
@@ -23,18 +24,29 @@ export class TransactionService {
       amount,
     }: CreateTransactionDto,
     user: JwtUser,
-  ) {
+  ): Promise<CreateTransactionSwaggerData> {
     const result = await this.transactionRepository.sequelize.transaction(async (t) => {
+      const sender = await User.findOne({
+        where: { id: user.user_id },
+        transaction: t,
+        raw: true,
+      });
+
       const receiver = await User.findOne({
         where: { cpf: receiver_cpf },
         transaction: t,
+        raw: true,
       });
 
       if (!receiver) {
         throw this.httpException.badRequest('Receiver não encontrado');
       }
 
-      const sender_id = user.userId;
+      if (sender.id === receiver.id) {
+        throw this.httpException.badRequest('Não é possível realizar transferência para a mesma si mesmo');
+      }
+
+      const sender_id = user.user_id;
 
       const senderBalance = await this.getBalance(sender_id, t);
 
@@ -44,16 +56,18 @@ export class TransactionService {
 
       const lastSenderTransaction = await Transaction.findOne({
         where: { sender_id },
-        order: [['createdAt', 'DESC']],
+        order: [['created_at', 'DESC']],
         transaction: t,
+        raw: true,
       });
 
       if (lastSenderTransaction) {
         const previousTransaction = await Transaction.findOne({
           where: { sender_id },
-          order: [['createdAt', 'DESC']],
+          order: [['created_at', 'DESC']],
           offset: 1,
           transaction: t,
+          raw: true,
         });
 
         if (previousTransaction) {
@@ -81,11 +95,13 @@ export class TransactionService {
 
       return {
         transaction_id: transactionJson.id,
-        hash: transactionJson.hash,
-        transaction_amount: transactionJson.amount,
+        transaction_hash: transactionJson.hash,
+        transaction_amount: Number(transactionJson.amount),
         sender_name: user.person_name,
-        sender_id: user.userId,
+        sender_cpf: sender.cpf,
+        sender_id: user.user_id,
         receiver_name: receiver.person_name,
+        receiver_cpf: receiver.cpf,
         receiver_id: receiver.id,
       };
     });
@@ -106,7 +122,7 @@ export class TransactionService {
       transaction: t,
     });
 
-    return Number(result[0].balance) as number;
+    return Number(result[0].balance);
   }
 
   static generateHash(transaction: Partial<Transaction>): string {

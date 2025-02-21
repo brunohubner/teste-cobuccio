@@ -9,7 +9,9 @@ import {
 } from 'sequelize-typescript';
 
 @Scopes(() => ({}))
-@Table({ schema: 'public', tableName: 'user', updatedAt: false })
+@Table({
+  schema: 'public', tableName: 'user', updatedAt: false, createdAt: false,
+})
 export default class User extends Model<User> {
   @Column({
     defaultValue: DataType.UUIDV4,

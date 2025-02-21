@@ -10,6 +10,7 @@ import { SigninDto } from './dtos/signin.dto';
 import { AuthService } from '@/shared/auth/auth.service';
 import { TransactionService } from '../transaction/transaction.service';
 import { JwtUser } from '@/shared/types/jwt-user.type';
+import { GetUserBalanceSwaggerData } from './swagger/get-balance.swagger';
 
 @Injectable()
 export class UserService {
@@ -107,7 +108,7 @@ export class UserService {
 
     const jwt = await this.authService.generateJwt({
       user: {
-        userId: user.id,
+        user_id: user.id,
         person_name: user.person_name,
         email: user.email,
       },
@@ -118,8 +119,8 @@ export class UserService {
     };
   }
 
-  async getBalance(user: JwtUser) {
-    const balance = await this.transactionService.getBalance(user.userId);
+  async getBalance(user: JwtUser): Promise<GetUserBalanceSwaggerData> {
+    const balance = await this.transactionService.getBalance(user.user_id);
 
     return {
       ...user,

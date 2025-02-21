@@ -22,6 +22,7 @@ import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { AuthGuard } from '@/shared/auth/auth.guard';
 import { HttpException } from '@/shared/errors/http/http-exception.error';
+import { CreateTransactionSwaggerResponse } from './swagger/create-transaction.swagger';
 
 @ApiTags('Transacoes')
 @Controller('/api/v1/transaction')
@@ -44,7 +45,7 @@ export class TransactionController {
   @ApiResponse({
     status: 201,
     description: 'Transação criada com sucesso',
-    type: Object,
+    type: CreateTransactionSwaggerResponse,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
   @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)

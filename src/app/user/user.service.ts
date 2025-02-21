@@ -54,10 +54,6 @@ export class UserService {
 
     const saltPassword = process.env.SALT_PASSWORD;
 
-    if (!saltPassword) {
-      throw this.httpException.internalServerError('JWT Secret não configurado no ambiente');
-    }
-
     const hashed_password = await bcryptjs.hash(`${dto.password}${saltPassword}`, 10);
 
     const userModel: Partial<User> = {
@@ -95,10 +91,6 @@ export class UserService {
     }
 
     const saltPassword = process.env.SALT_PASSWORD;
-
-    if (!saltPassword) {
-      throw this.httpException.internalServerError('JWT Secret não configurado no ambiente');
-    }
 
     const isValidPassword = await bcryptjs.compare(`${dto.password}${saltPassword}`, user.hashed_password);
 

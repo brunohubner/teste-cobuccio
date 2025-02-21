@@ -87,6 +87,59 @@ describe('UserService', () => {
         }),
       });
     });
+
+    it('deve lançar um erro se usuário for de menor', async () => {
+      const dto: CreateUserDto = {
+        person_name: 'Young User',
+        email: 'young@example.com',
+        cpf: '12345678902',
+        birth_date: '2010-01-01',
+        password: '@Pass1234',
+        password_confirmation: '@Pass1234',
+      };
+
+      await expect(service.signUp(dto)).rejects.toThrow('Idade mínima para cadastro é de 18 anos');
+    });
+
+    it('deve lançar um erro se email já estiver cadastrado', async () => {
+      const partialUser: Partial<User> = {
+        email: 'john@example.com',
+        cpf: '98765432100',
+      };
+
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(partialUser as any);
+
+      const dto: CreateUserDto = {
+        person_name: 'John Doe',
+        email: 'john@example.com',
+        cpf: '12345678901',
+        birth_date: '2000-01-01',
+        password: '@Pass1234',
+        password_confirmation: '@Pass1234',
+      };
+
+      await expect(service.signUp(dto)).rejects.toThrow('Email informado já cadastrado no sistema, por favor, informe outro email');
+    });
+
+    it('deve lançar um erro se cpf já estiver cadastrado', async () => {
+      const partialUser: Partial<User> = {
+        email: 'other@example.com',
+        cpf: '12345678901',
+      };
+
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(partialUser as any);
+
+      const dto: CreateUserDto = {
+        person_name: 'John Doe',
+        email: 'john@example.com',
+        cpf: '12345678901',
+        birth_date: '2000-01-01',
+        password: '@Pass1234',
+        password_confirmation: '@Pass1234',
+      };
+
+      await expect(service.signUp(dto)).rejects.toThrow('CPF informado já cadastrado no sistema, por favor, informe outro CPF');
+    });
   });
 
   describe('signIn', () => {
@@ -114,6 +167,30 @@ describe('UserService', () => {
       const result = await service.signIn(dto);
 
       expect(result).toEqual({ jwt: 'jwt_token' });
+    });
+
+    it('deve lançar um erro se email não for encontrado', async () => {
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+
+      const dto: SigninDto = { email: 'invalid@example.com', password: '@Pass1234' };
+
+      await expect(service.signIn(dto)).rejects.toThrow('Email ou senha inválidos');
+    });
+
+    it('deve lançar um erro se a senha estiver incorreta', async () => {
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue({
+        id: '1',
+        person_name: 'John Doe',
+        email: 'john@example.com',
+        hashed_password: 'hashed_password',
+      } as any);
+
+      // @ts-ignore
+      jest.spyOn(bcryptjs, 'compare').mockResolvedValue(false);
+
+      const dto: SigninDto = { email: 'john@example.com', password: '@WrongPass123' };
+
+      await expect(service.signIn(dto)).rejects.toThrow('Email ou senha inválidos');
     });
   });
 

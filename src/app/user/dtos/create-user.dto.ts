@@ -15,10 +15,10 @@ import { IsValidDate } from '@/shared/decorators/is-date.decorator';
 export class CreateUserDto {
   @Length(3, 255)
   @Matches(REGEX.PERSON_NAME, { message: 'Nome inválido' })
-  @ApiProperty()
+  @ApiProperty({ example: 'João da Silva' })
     person_name: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '12345678909' })
   @IsString()
   @Validate(IsValidCPF, {
     message: 'CPF matematicamente inválido',
@@ -27,27 +27,27 @@ export class CreateUserDto {
     cpf: string;
 
   @IsEmail()
-  @ApiProperty()
+  @ApiProperty({ example: 'joao.da.silva@domain.com' })
     email: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '@Pass1234' })
   @IsString()
   @MinLength(8)
   @Matches(REGEX.PASSWORD, { message: 'A senha deve conter números, caracteres especiais, maiúsculas e minusculas' })
     password: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '@Pass1234' })
   @IsString()
   @Match('password', {
     message: 'As senhas não conferem',
   })
     password_confirmation: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ example: '2025-02-01' })
   @Validate(IsValidDate, {
     message: 'Data de nascimento inválida',
   })
+  @IsString()
   @Matches(REGEX['YYYY-MM-DDD'], { message: 'Data de nascimento deve ser no formato: 2025-02-01' })
     birth_date: string;
 }

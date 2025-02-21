@@ -24,12 +24,13 @@ export class UserController {
     private readonly userService: UserService,
   ) { }
 
-  @Post('/:signup')
+  @Post('/signup')
   @ApiBearerAuth()
   @UsePipes(ValidationPipe)
   @HttpCode(201)
   @ApiOperation({
-    summary: 'Cria um novo usuário',
+    summary: 'Criar um novo usuário no sistema',
+    description: 'Criar um novo usuário no sistema informando os dados necessarios corretamente',
   })
   @ApiResponse({
     status: 201,

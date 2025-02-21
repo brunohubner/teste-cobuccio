@@ -18,7 +18,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateUserSwaggerResponse } from './swagger/create-user.swagger';
 import { SigninDto } from './dtos/signin.dto';
 
-@ApiTags('Cadastro_e_autenticacao_de_usuarios')
+@ApiTags('Usuarios')
 @Controller('/api/v1/user')
 export class UserController {
   constructor(

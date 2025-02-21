@@ -9,6 +9,7 @@ import { AuthModule } from './shared/auth/auth.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { HttpExceptionModule } from './shared/errors/http/http-exception.module';
 import { UserModule } from './app/user/user.module';
+import { TransactionModule } from './app/transaction/transaction.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UserModule } from './app/user/user.module';
     AuthModule,
 
     UserModule,
+    TransactionModule,
 
     HealthModule,
   ],

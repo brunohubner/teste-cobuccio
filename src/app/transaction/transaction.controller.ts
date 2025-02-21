@@ -23,7 +23,7 @@ import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { AuthGuard } from '@/shared/auth/auth.guard';
 import { HttpException } from '@/shared/errors/http/http-exception.error';
 
-@ApiTags('Cria_transacoes_fincanceiras')
+@ApiTags('Transacoes')
 @Controller('/api/v1/transaction')
 export class TransactionController {
   constructor(

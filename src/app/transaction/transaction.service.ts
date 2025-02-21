@@ -62,60 +62,32 @@ export class TransactionService {
         }
       }
 
-      const transaction = await Transaction.create({
+      const transactionModel: Partial<Transaction> = {
         sender_id,
         receiver_id,
         amount,
-        status: 'pending',
+        status: 'completed',
         previousHash: lastSenderTransaction ? lastSenderTransaction.hash : '0',
-        hash: '0',
-      }, { transaction: t });
+      };
 
-      transaction.hash = TransactionService.generateHash(transaction);
+      transactionModel.hash = TransactionService.generateHash(transactionModel);
 
-      await transaction.save({ transaction: t });
+      const transaction = await Transaction.create(transactionModel, { transaction: t });
 
-      return transaction;
+      const transactionJson = transaction.toJSON();
+
+      return {
+        transaction_id: transactionJson.id,
+        hash: transactionJson.hash,
+        transaction_amount: transactionJson.amount,
+        sender_name: sender.person_name,
+        sender_id: sender.id,
+        receiver_name: receiver.person_name,
+        receiver_id: receiver.id,
+      };
     });
 
     return result;
-  }
-
-  async completeTransaction(transactionId: number): Promise<Transaction> {
-    return this.transactionRepository.sequelize.transaction(async (t) => {
-      const transaction = await Transaction.findByPk(transactionId, { transaction: t });
-
-      if (!transaction) {
-        throw this.httpException.notFound('Transaction não encontrada');
-      }
-
-      if (transaction.status !== 'pending') {
-        throw this.httpException.badRequest('Transaction não pode ser completada');
-      }
-
-      // Verificar autenticidade da transação atual
-      const previousTransaction = await Transaction.findOne({
-        where: {
-          sender_id: transaction.sender_id,
-        },
-        order: [['createdAt', 'DESC']],
-        offset: 1,
-        transaction: t,
-      });
-
-      if (previousTransaction) {
-        const expectedHash = TransactionService.generateHash(previousTransaction);
-        if (transaction.previousHash !== expectedHash) {
-          throw this.httpException.badRequest('Cadeia de transações comprometida');
-        }
-      }
-
-      transaction.status = 'completed';
-
-      await transaction.save({ transaction: t });
-
-      return transaction;
-    });
   }
 
   async getBalance(user_id: string, t: SequelizeTransaction): Promise<number> {
@@ -135,7 +107,9 @@ export class TransactionService {
   }
 
   static generateHash(transaction: Partial<Transaction>): string {
-    const data = `${transaction.sender_id}${transaction.receiver_id}${transaction.amount}${transaction.previousHash}${transaction.createdAt}`;
+    const { BANK_SECRET } = process.env;
+
+    const data = `${BANK_SECRET}${transaction.sender_id}${transaction.receiver_id}${transaction.amount}${transaction.previousHash}${transaction.createdAt}`;
 
     return crypto.createHash('sha256').update(data).digest('hex');
   }

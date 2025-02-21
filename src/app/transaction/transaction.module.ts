@@ -4,11 +4,13 @@ import { AuthModule } from '@/shared/auth/auth.module';
 import { TransactionService } from './transaction.service';
 import { TransactionProvider } from './transaction.provider';
 import { HttpExceptionModule } from '@/shared/errors/http/http-exception.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
     HttpExceptionModule,
     AuthModule,
+    UserModule,
   ],
   controllers: [TransactionController],
   providers: [...TransactionProvider, TransactionService],

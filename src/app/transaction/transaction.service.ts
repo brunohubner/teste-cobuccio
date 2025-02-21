@@ -125,19 +125,23 @@ export class TransactionService {
     return Number(result[0].balance);
   }
 
-  static generateHash(transaction: Partial<Transaction>): string {
+  static generateHash({
+    id,
+    sender_id,
+    receiver_id,
+    amount,
+    previoushash,
+    created_at,
+    status,
+  }: Partial<Transaction>): string {
     const { BANK_SECRET } = process.env;
 
-    const data = {
-      transaction_id: transaction.id,
-      sender_id: transaction.sender_id,
-      receiver_id: transaction.receiver_id,
-      amount: transaction.amount,
-      previousHash: transaction.previoushash,
-      createdAt: transaction.created_at,
-      BANK_SECRET,
-    };
+    if (!BANK_SECRET) {
+      throw new Error('BANK_SECRET não configurado no ambiente');
+    }
 
-    return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
+    const data = `${id}${sender_id}${receiver_id}${amount}${previoushash}${created_at}${status}${BANK_SECRET}`;
+
+    return crypto.createHash('sha256').update(data).digest('hex');
   }
 }

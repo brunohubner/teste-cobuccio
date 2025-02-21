@@ -109,6 +109,17 @@ export class TransactionService {
     return result;
   }
 
+  async cancel(transaction_id: string, user: JwtUser) {
+    const result = await this.transactionRepository.sequelize.transaction(async (t) => {
+      const lastTransaction = await Transaction.findOne({
+        where: { sender_id: user.user_id },
+        order: [['created_at', 'DESC']],
+        transaction: t,
+        raw: true,
+      });
+    });
+  }
+
   async getBalance(user_id: string, t: SequelizeTransaction = null): Promise<number> {
     const sql = `--sql
       SELECT

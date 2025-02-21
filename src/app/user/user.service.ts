@@ -11,6 +11,7 @@ export class UserService {
   ) { }
 
   async signUp(...args: any) {
+    console.log("🚀 ~ UserService ~ signUp ~ ...args:", ...args)
     // return null
   }
 

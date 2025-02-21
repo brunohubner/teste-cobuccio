@@ -20,4 +20,6 @@ export const REGEX = Object.freeze({
   MUNICIPAL_REGISTRATION: /^[a-zA-Z0-9\\.-]+$/u,
   NUMBERS_ONLY: /^[0-9]+$/i,
   LETTERS_ONLY_AND_SPACE_ONLY: /^[a-zA-Z ]+$/i,
+
+  'YYYY-MM-DDD': /^([0-9]{4}-[0-9]{2}-[0-9]{2})$/i,
 });

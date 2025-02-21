@@ -4,7 +4,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { QueryTypes, Transaction as SequelizeTransaction } from 'sequelize';
 import User from '@/shared/models/user.model';
 import { HttpException } from '@/shared/errors/http/http-exception.error';
-import { AuthService } from '@/shared/auth/auth.service';
 import Transaction from '@/shared/models/transaction.model';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 
@@ -14,9 +13,7 @@ export class TransactionService {
     @Inject(HttpException.name)
     private readonly httpException: typeof HttpException,
     @Inject(User.name)
-    private readonly userRepository: typeof User,
     private readonly transactionRepository: typeof Transaction,
-    private readonly authService: AuthService,
   ) { }
 
   async createTransaction({
@@ -84,10 +81,41 @@ export class TransactionService {
     return result;
   }
 
-  static generateHash(transaction: Partial<Transaction>): string {
-    const data = `${transaction.sender_id}${transaction.receiver_id}${transaction.amount}${transaction.previousHash}${transaction.createdAt}`;
+  async completeTransaction(transactionId: number): Promise<Transaction> {
+    return this.transactionRepository.sequelize.transaction(async (t) => {
+      const transaction = await Transaction.findByPk(transactionId, { transaction: t });
 
-    return crypto.createHash('sha256').update(data).digest('hex');
+      if (!transaction) {
+        throw this.httpException.notFound('Transaction não encontrada');
+      }
+
+      if (transaction.status !== 'pending') {
+        throw this.httpException.badRequest('Transaction não pode ser completada');
+      }
+
+      // Verificar autenticidade da transação atual
+      const previousTransaction = await Transaction.findOne({
+        where: {
+          sender_id: transaction.sender_id,
+        },
+        order: [['createdAt', 'DESC']],
+        offset: 1,
+        transaction: t,
+      });
+
+      if (previousTransaction) {
+        const expectedHash = TransactionService.generateHash(previousTransaction);
+        if (transaction.previousHash !== expectedHash) {
+          throw this.httpException.badRequest('Cadeia de transações comprometida');
+        }
+      }
+
+      transaction.status = 'completed';
+
+      await transaction.save({ transaction: t });
+
+      return transaction;
+    });
   }
 
   async getBalance(user_id: string, t: SequelizeTransaction): Promise<number> {
@@ -104,5 +132,11 @@ export class TransactionService {
     });
 
     return result[0].balance as number;
+  }
+
+  static generateHash(transaction: Partial<Transaction>): string {
+    const data = `${transaction.sender_id}${transaction.receiver_id}${transaction.amount}${transaction.previousHash}${transaction.createdAt}`;
+
+    return crypto.createHash('sha256').update(data).digest('hex');
   }
 }

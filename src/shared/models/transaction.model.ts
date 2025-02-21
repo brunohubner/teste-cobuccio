@@ -12,6 +12,8 @@ import {
 } from 'sequelize-typescript';
 import User from './user.model';
 
+export type TransactionStatus = 'pending' | 'completed' | 'cancelled' | 'rejected';
+
 @Scopes(() => ({}))
 @Table({ schema: 'public', tableName: 'transaction', updatedAt: false })
 export default class Transaction extends Model<Transaction> {
@@ -46,7 +48,7 @@ export default class Transaction extends Model<Transaction> {
     allowNull: false,
     type: DataType.STRING,
   })
-    status: string;
+    status: TransactionStatus;
 
   @Column({
     type: DataTypes.STRING,

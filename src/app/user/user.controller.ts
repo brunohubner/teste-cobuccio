@@ -40,7 +40,7 @@ export class UserController {
   @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)
   @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)
   async POST_Signup(@Body() body: CreateUserDto) {
-    const data = await this.userService.signUp(body)
+    const data = await this.userService.signUp(body);
 
     return { data };
   }

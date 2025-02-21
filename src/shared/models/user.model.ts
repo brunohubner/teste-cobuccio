@@ -16,41 +16,41 @@ export default class User extends Model<User> {
     primaryKey: true,
     type: DataType.UUID,
   })
-    declare id: string;
+  declare id: string;
 
   @Column({
     allowNull: false,
     type: DataType.STRING,
   })
-  person_name: string;
+    person_name: string;
 
   @Column({
     allowNull: false,
     type: DataType.STRING,
   })
-  email: string;
+    email: string;
 
   @Column({
     allowNull: false,
     type: DataType.STRING,
   })
-  cpf: string;
+    cpf: string;
 
   @Column({
     allowNull: false,
     type: DataType.STRING,
   })
-  hashed_password: string;
+    hashed_password: string;
 
   @Column({
     allowNull: false,
     type: DataType.DATE,
   })
-  birth_date: Date;
+    birth_date: Date;
 
   @CreatedAt
-  created_at: Date;
+    created_at: Date;
 
   @UpdatedAt
-  updated_at: Date;
+    updated_at: Date;
 }

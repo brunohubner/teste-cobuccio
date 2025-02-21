@@ -13,32 +13,32 @@ export class CreateUserDto {
   @Length(3, 255)
   @Matches(REGEX.PERSON_NAME, { message: 'Nome inválido' })
   @ApiProperty()
-  person_name: string;
+    person_name: string;
 
   @ApiProperty()
   @IsString()
   @Matches(REGEX.CPF_WITHOUT_MASK, { message: 'Formato de CPF inválido' })
-  cpf: string;
+    cpf: string;
 
   @IsEmail()
   @ApiProperty()
-  email: string;
+    email: string;
 
   @ApiProperty()
   @IsString()
   @MinLength(8)
   @Matches(REGEX.PASSWORD, { message: 'A senha deve conter números, caracteres especiais, maiúsculas e minusculas' })
-  password: string;
+    password: string;
 
   @ApiProperty()
   @IsString()
   @Match('password', {
     message: 'As senhas não conferem',
   })
-  password_confirmation: string;
+    password_confirmation: string;
 
   @ApiProperty()
   @IsString()
   @Matches(REGEX['YYYY-MM-DDD'], { message: 'Data de nascimento deve ser no formato: 2025-02-01' })
-  birth_date: string;
+    birth_date: string;
 }

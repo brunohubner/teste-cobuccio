@@ -8,6 +8,7 @@ import { HealthModule } from './app/health/health.module';
 import { AuthModule } from './shared/auth/auth.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { HttpExceptionModule } from './shared/errors/http/http-exception.module';
+import { UserModule } from './app/user/user.module';
 
 @Module({
   imports: [
@@ -17,6 +18,8 @@ import { HttpExceptionModule } from './shared/errors/http/http-exception.module'
     HttpExceptionModule,
     DatabaseModule,
     AuthModule,
+
+    UserModule,
 
     HealthModule,
   ],

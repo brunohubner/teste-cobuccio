@@ -40,7 +40,7 @@ export default class Transaction extends Model<Transaction> {
     type: DataTypes.DECIMAL(10, 6),
     allowNull: false,
   })
-    amount: string;
+    amount: number;
 
   @Column({
     allowNull: false,

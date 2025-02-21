@@ -14,9 +14,11 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     const jwtToken = this.extractTokenFromHeader(request);
+
     if (!jwtToken) {
       throw new UnauthorizedException('Bearer token JWT não enviado no header');
     }
+
     try {
       const decodedJwt = await this.authService.verifyJwt(jwtToken);
 

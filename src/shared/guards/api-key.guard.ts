@@ -12,7 +12,7 @@ export class ApiKeyGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const apiKey = request.headers['x-api-key'];
 
-    if (apiKey !== process.env.API_KEY) {
+    if (apiKey !== process.env.PRIVATE_API_KEY) {
       requestLog(context.switchToHttp().getRequest(), context.getClass().name);
       throw new UnauthorizedException('Bearer token JWT não enviado no header');
     }

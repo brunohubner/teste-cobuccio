@@ -16,6 +16,7 @@ import {
 import { API_RESPONSES } from '@/shared/constants/api-responses.const';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { CreateUserSwaggerResponse } from './swagger/create-user.swagger';
 
 @ApiTags('User')
 @Controller('/api/v1/user')
@@ -35,7 +36,7 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: 'Usuário criado com sucesso',
-    type: Object,
+    type: CreateUserSwaggerResponse,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
   @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)

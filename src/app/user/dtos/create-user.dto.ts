@@ -5,9 +5,12 @@ import {
   Matches,
   MinLength,
   Length,
+  Validate,
 } from 'class-validator';
 import { REGEX } from '@/shared/constants/regex.const';
 import { Match } from '@/shared/decorators/match.decorator';
+import { IsValidCPF } from '@/shared/decorators/is-cpf.decorator';
+import { IsValidDate } from '@/shared/decorators/is-date.decorator';
 
 export class CreateUserDto {
   @Length(3, 255)
@@ -17,6 +20,9 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsString()
+  @Validate(IsValidCPF, {
+    message: 'CPF matematicamente inválido',
+  })
   @Matches(REGEX.CPF_WITHOUT_MASK, { message: 'Formato de CPF inválido' })
     cpf: string;
 
@@ -39,6 +45,9 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsString()
+  @Validate(IsValidDate, {
+    message: 'Data de nascimento inválida',
+  })
   @Matches(REGEX['YYYY-MM-DDD'], { message: 'Data de nascimento deve ser no formato: 2025-02-01' })
     birth_date: string;
 }

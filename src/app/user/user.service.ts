@@ -1,6 +1,7 @@
+import * as bcryptjs from 'bcryptjs';
+
 import { Inject, Injectable } from '@nestjs/common';
 import { Op } from 'sequelize';
-import * as bcryptjs from 'bcryptjs';
 import User from '@/shared/models/user.model';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { HttpException } from '@/shared/errors/http/http-exception.error';
@@ -26,6 +27,7 @@ export class UserService {
     }
 
     const user = await this.userRepository.findOne({
+      attributes: ['email', 'cpf'],
       where: {
         [Op.or]: [
           { email: dto.email },
@@ -35,18 +37,11 @@ export class UserService {
       raw: true,
     });
 
-    console.log('const user = await this.userRepository.findOne({', user);
-
-    console.log('🚀 ~ signUp ~ user.email:', user.email);
-    console.log('🚀 ~ signUp ~ dto.emai:', dto.email);
-
     if (user && user.email === dto.email) {
-      console.log('🚀 ~ UserService ~ signUp ~ user && user.email === dto.email:', user && user.email === dto.email);
       throw this.httpException.badRequest('Email informado já cadastrado no sistema, por favor, informe outro email');
     }
 
     if (user && user.cpf === dto.cpf) {
-      console.log('🚀 ~ UserService ~ signUp ~ user && user.cpf === dto.cpf:', user && user.cpf === dto.cpf);
       throw this.httpException.badRequest('CPF informado já cadastrado no sistema, por favor, informe outro CPF');
     }
 

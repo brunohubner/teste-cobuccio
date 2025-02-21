@@ -1,7 +1,5 @@
-import User from '@/shared/models/user.model';
 import { Inject, Injectable } from '@nestjs/common';
-import { Op, WhereOptions } from 'sequelize';
-
+import User from '@/shared/models/user.model';
 
 @Injectable()
 export class UserService {

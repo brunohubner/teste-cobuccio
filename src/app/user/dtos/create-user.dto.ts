@@ -1,5 +1,3 @@
-import { REGEX } from '@/shared/constants/regex.const';
-import { Match } from '@/shared/decorators/match.decorator';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
@@ -8,6 +6,8 @@ import {
   MinLength,
   Length,
 } from 'class-validator';
+import { REGEX } from '@/shared/constants/regex.const';
+import { Match } from '@/shared/decorators/match.decorator';
 
 export class CreateUserDto {
   @Length(3, 255)

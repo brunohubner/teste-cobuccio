@@ -32,13 +32,21 @@ export class UserService {
           { cpf: dto.cpf },
         ],
       },
+      raw: true,
     });
 
+    console.log('const user = await this.userRepository.findOne({', user);
+
+    console.log('🚀 ~ signUp ~ user.email:', user.email);
+    console.log('🚀 ~ signUp ~ dto.emai:', dto.email);
+
     if (user && user.email === dto.email) {
+      console.log('🚀 ~ UserService ~ signUp ~ user && user.email === dto.email:', user && user.email === dto.email);
       throw this.httpException.badRequest('Email informado já cadastrado no sistema, por favor, informe outro email');
     }
 
     if (user && user.cpf === dto.cpf) {
+      console.log('🚀 ~ UserService ~ signUp ~ user && user.cpf === dto.cpf:', user && user.cpf === dto.cpf);
       throw this.httpException.badRequest('CPF informado já cadastrado no sistema, por favor, informe outro CPF');
     }
 

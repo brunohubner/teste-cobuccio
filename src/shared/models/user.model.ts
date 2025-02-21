@@ -9,7 +9,7 @@ import {
 } from 'sequelize-typescript';
 
 @Scopes(() => ({}))
-@Table({ schema: 'public', tableName: 'user', updatedAt: true })
+@Table({ schema: 'public', tableName: 'user', updatedAt: false })
 export default class User extends Model<User> {
   @Column({
     defaultValue: DataType.UUIDV4,
@@ -49,8 +49,10 @@ export default class User extends Model<User> {
     birth_date: Date;
 
   @CreatedAt
+  @Column
     created_at: Date;
 
   @UpdatedAt
+  @Column
     updated_at: Date;
 }

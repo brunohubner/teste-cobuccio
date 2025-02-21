@@ -12,12 +12,19 @@ module.exports = {
 		'<rootDir>/src/**/*.ts',
 
 		// Ignore:
-		'!<rootDir>/src/constants/**',
-		'!<rootDir>/src/data/**',
-		'!<rootDir>/src/database/**',
-		'!<rootDir>/src/types/**',
-		'!<rootDir>/src/models/**',
-		'!<rootDir>/src/functions/logger.ts',
+		'!<rootDir>/src/main.ts',
+		'!<rootDir>/src/app.module.ts',
+
+		'!<rootDir>/src/config/**',
+
+		'!<rootDir>/src/shared/constants/**',
+		'!<rootDir>/src/shared/database/**',
+		'!<rootDir>/src/shared/styles/**',
+		'!<rootDir>/src/shared/swagger/**',
+		'!<rootDir>/src/shared/types/**',
+		'!<rootDir>/src/shared/models/**',
+		'!<rootDir>/src/shared/functions/logger.ts',
+
 	],
 	coverageDirectory: 'coverage',
 	coverageProvider: 'v8',

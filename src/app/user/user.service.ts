@@ -6,6 +6,8 @@ import User from '@/shared/models/user.model';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { HttpException } from '@/shared/errors/http/http-exception.error';
 import { CreateUserSwaggerData } from './swagger/create-user.swagger';
+import { SigninDto } from './dtos/signin.dto';
+import { AuthService } from '@/shared/auth/auth.service';
 
 @Injectable()
 export class UserService {
@@ -14,6 +16,7 @@ export class UserService {
     private readonly httpException: typeof HttpException,
     @Inject(User.name)
     private readonly userRepository: typeof User,
+    private readonly authService: AuthService,
   ) { }
 
   async signUp(dto: CreateUserDto): Promise<CreateUserSwaggerData> {
@@ -74,7 +77,41 @@ export class UserService {
     };
   }
 
-  async login(...args: any) {
-    // return null
+  async signIn(dto: SigninDto) {
+    const user = await this.userRepository.findOne({
+      attributes: ['id', 'person_name', 'email', 'hashed_password'],
+      where: {
+        email: dto.email,
+      },
+      raw: true,
+    });
+
+    if (!user) {
+      throw this.httpException.unauthorized('Email ou senha inválidos');
+    }
+
+    const saltPassword = process.env.SALT_PASSWORD;
+
+    if (!saltPassword) {
+      throw this.httpException.internalServerError('JWT Secret não configurado no ambiente');
+    }
+
+    const isValidPassword = await bcryptjs.compare(`${dto.password}${saltPassword}`, user.hashed_password);
+
+    if (!isValidPassword) {
+      throw this.httpException.unauthorized('Email ou senha inválidos');
+    }
+
+    const jwt = await this.authService.generateJwt({
+      user: {
+        userId: user.id,
+        person_name: user.person_name,
+        email: user.email,
+      },
+    });
+
+    return {
+      jwt,
+    };
   }
 }

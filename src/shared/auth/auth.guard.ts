@@ -12,13 +12,16 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-    if (!token) {
+
+    const jwtToken = this.extractTokenFromHeader(request);
+    if (!jwtToken) {
       throw new UnauthorizedException('Bearer token JWT não enviado no header');
     }
     try {
-      const decodedToten = await this.authService.verifyJwt(token);
-      request.user = decodedToten.user;
+      const decodedJwt = await this.authService.verifyJwt(jwtToken);
+
+      request.decodedJwt = decodedJwt;
+      request.jwtToken = jwtToken;
     } catch {
       throw new UnauthorizedException('JWT inválido');
     }

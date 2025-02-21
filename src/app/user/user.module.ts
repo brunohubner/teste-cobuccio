@@ -6,7 +6,10 @@ import { UserProvider } from './user.provider';
 import { HttpExceptionModule } from '@/shared/errors/http/http-exception.module';
 
 @Module({
-  imports: [HttpExceptionModule, AuthModule],
+  imports: [
+    HttpExceptionModule,
+    AuthModule,
+  ],
   controllers: [UserController],
   providers: [...UserProvider, UserService],
   exports: [...UserProvider, UserService],

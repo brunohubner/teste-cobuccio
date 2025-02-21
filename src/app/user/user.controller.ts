@@ -8,7 +8,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -17,6 +16,7 @@ import { API_RESPONSES } from '@/shared/constants/api-responses.const';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { CreateUserSwaggerResponse } from './swagger/create-user.swagger';
+import { SigninDto } from './dtos/signin.dto';
 
 @ApiTags('User')
 @Controller('/api/v1/user')
@@ -26,7 +26,6 @@ export class UserController {
   ) { }
 
   @Post('/signup')
-  @ApiBearerAuth()
   @UsePipes(ValidationPipe)
   @HttpCode(201)
   @ApiOperation({
@@ -43,6 +42,27 @@ export class UserController {
   @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)
   async POST_Signup(@Body() body: CreateUserDto) {
     const data = await this.userService.signUp(body);
+
+    return { data };
+  }
+
+  @Post('/signin')
+  @UsePipes(ValidationPipe)
+  @HttpCode(200)
+  @ApiOperation({
+    summary: 'Realizar login no sistema',
+    description: 'Realizar login no sistema informando email e senha',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Login realizado com sucesso',
+    type: Object,
+  })
+  @ApiResponse(API_RESPONSES.BAD_REQUEST)
+  @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)
+  @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)
+  async POST_Signin(@Body() body: SigninDto) {
+    const data = await this.userService.signIn(body);
 
     return { data };
   }

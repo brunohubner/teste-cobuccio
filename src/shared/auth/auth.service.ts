@@ -12,4 +12,14 @@ export class AuthService {
       secret: process.env.JWT_SECRET,
     });
   }
+
+  async generateJwt<T>(payload: T) {
+    return this.jwtService.sign(payload as any, {
+      secret: process.env.JWT_SECRET,
+    });
+  }
+
+  async decodeJwt<T>(token: string) {
+    return this.jwtService.decode(token) as T;
+  }
 }

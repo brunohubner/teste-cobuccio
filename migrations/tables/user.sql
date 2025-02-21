@@ -1,4 +1,5 @@
 -- DROP TABLE IF EXISTS public.user;
+
 CREATE TABLE IF NOT EXISTS public.user (
 	id character varying(36) COLLATE pg_catalog."default" NOT NULL DEFAULT public.uuid_generate_v4(),
 	person_name character varying(255) COLLATE pg_catalog."default" NOT NULL,

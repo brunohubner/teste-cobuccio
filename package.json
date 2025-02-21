@@ -12,7 +12,13 @@
     "start:debug": "nest start --debug --watch",
     "start": "node dist/main",
     "lint": "eslint --ext .ts src/",
-    "lint:fix": "eslint --ext .ts src/ --fix"
+    "lint:fix": "eslint --ext .ts src/ --fix",
+    "test": "NODE_OPTIONS='--no-warnings' jest --passWithNoTests --forceExit --detectOpenHandles --runInBand --no-cache",
+    "test:watch": "npm run test -- --watchAll",
+    "test:unit": "npm run test -- -c jest-unit.config.js",
+    "test:e2e": "npm run test -- -c jest.e2e.config.js",
+    "test:cov": "rm -rf coverage && npm run test -- --coverage && npm run test:cov:serve",
+    "test:cov:serve": "kill-port 3009 && echo '>> View tests coverage:\n\n-> http://127.0.0.1:3009' && http-server coverage/lcov-report/ -p 3009 -s -c1"
   },
   "dependencies": {
     "@fastify/static": "^6.12.0",

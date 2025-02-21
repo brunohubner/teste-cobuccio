@@ -67,7 +67,7 @@ export class TransactionService {
         receiver_id,
         amount,
         status: 'completed',
-        previousHash: lastSenderTransaction ? lastSenderTransaction.hash : '0',
+        previoushash: lastSenderTransaction ? lastSenderTransaction.hash : '0',
       };
 
       transactionModel.hash = TransactionService.generateHash(transactionModel);
@@ -109,8 +109,16 @@ export class TransactionService {
   static generateHash(transaction: Partial<Transaction>): string {
     const { BANK_SECRET } = process.env;
 
-    const data = `${BANK_SECRET}${transaction.sender_id}${transaction.receiver_id}${transaction.amount}${transaction.previousHash}${transaction.createdAt}`;
+    const data = {
+      transaction_id: transaction.id,
+      sender_id: transaction.sender_id,
+      receiver_id: transaction.receiver_id,
+      amount: transaction.amount,
+      previousHash: transaction.previoushash,
+      createdAt: transaction.created_at,
+      BANK_SECRET,
+    };
 
-    return crypto.createHash('sha256').update(data).digest('hex');
+    return crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
   }
 }

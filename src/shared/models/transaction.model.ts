@@ -54,7 +54,7 @@ export default class Transaction extends Model<Transaction> {
     type: DataTypes.STRING,
     allowNull: false,
   })
-    previousHash: string;
+    previoushash: string;
 
   @Column({
     type: DataTypes.STRING,

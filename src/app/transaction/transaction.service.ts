@@ -8,6 +8,7 @@ import Transaction from '@/shared/models/transaction.model';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { JwtUser } from '@/shared/types/jwt-user.type';
 import { CreateTransactionSwaggerData } from './swagger/create-transaction.swagger';
+import { toFixed2 } from '@/shared/functions/toFixed2';
 
 @Injectable()
 export class TransactionService {
@@ -63,29 +64,18 @@ export class TransactionService {
 
       console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ lastSenderTransaction:', lastSenderTransaction);
 
-      if (lastSenderTransaction) {
-        const previousTransaction = await Transaction.findOne({
-          where: { sender_id },
-          order: [['created_at', 'DESC']],
-          offset: 1,
-          transaction: t,
-          raw: true,
-        });
+      if (lastSenderTransaction?.id) {
+        const expectedHash = TransactionService.generateHash(lastSenderTransaction);
 
-        console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ previousTransaction:', previousTransaction);
+        console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ expectedHash:', expectedHash);
 
-        if (previousTransaction) {
-          const expectedHash = TransactionService.generateHash(previousTransaction);
-
-          console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ expectedHash:', expectedHash);
-
-          if (lastSenderTransaction.hash !== expectedHash) {
-            throw this.httpException.badRequest('A última transação do sender foi comprometida');
-          }
+        if (lastSenderTransaction.hash !== expectedHash) {
+          throw this.httpException.badRequest('A última transação do sender foi comprometida');
         }
       }
 
       const transactionModel: Partial<Transaction> = {
+        id: crypto.randomUUID(),
         sender_id,
         receiver_id: receiver.id,
         amount,
@@ -164,18 +154,23 @@ export class TransactionService {
     return Number(result[0].balance);
   }
 
-  static generateHash({
-    id,
-    sender_id,
-    receiver_id,
-    amount,
-    previous_hash,
-    created_at,
-    status,
-  }: Partial<Transaction>): string {
+  static generateHash(dto: Partial<Transaction>): string {
+    const {
+      id,
+      sender_id,
+      receiver_id,
+      amount,
+      previous_hash,
+      status,
+    } = dto;
+
+    console.log('🚀 ~ TransactionService ~ generateHash ~ dto:', dto);
+
     const { BANK_SECRET } = process.env;
 
-    const data = `${id}${sender_id}${receiver_id}${Number(amount)}${previous_hash}${created_at.toISOString()}${status}${BANK_SECRET}`;
+    console.log('🚀 ~ TransactionService ~ generateHash ~ BANK_SECRET:', BANK_SECRET);
+
+    const data = `${id}${sender_id}${receiver_id}${toFixed2(amount)}${previous_hash}${status}${BANK_SECRET}`;
 
     return crypto.createHash('sha256').update(data).digest('hex');
   }

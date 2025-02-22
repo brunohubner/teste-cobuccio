@@ -76,7 +76,7 @@ export class TransactionController {
   @ApiResponse({
     status: 201,
     description: 'Transação cancelada com sucesso',
-    type: CreateTransactionSwaggerResponse,
+    type: Object,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
   @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)

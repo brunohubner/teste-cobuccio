@@ -12,7 +12,7 @@ import {
 } from 'sequelize-typescript';
 import User from './user.model';
 
-export type TransactionStatus = 'pending' | 'completed' | 'cancelled' | 'rejected';
+export type TransactionStatus = 'pending' | 'completed' | 'canceled' | 'rejected';
 
 @Scopes(() => ({}))
 @Table({
@@ -56,7 +56,7 @@ export default class Transaction extends Model<Transaction> {
     type: DataTypes.STRING,
     allowNull: false,
   })
-    previoushash: string;
+    previous_hash: string;
 
   @Column({
     type: DataTypes.STRING,

@@ -25,7 +25,7 @@ export class TransactionService {
     }: CreateTransactionDto,
     user: JwtUser,
   ): Promise<CreateTransactionSwaggerData> {
-    const result = await this.transactionRepository.sequelize.transaction(async (t) => {
+    return this.transactionRepository.sequelize.transaction(async (t) => {
       const sender = await User.findOne({
         where: { id: user.user_id },
         transaction: t,
@@ -61,6 +61,8 @@ export class TransactionService {
         raw: true,
       });
 
+      console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ lastSenderTransaction:', lastSenderTransaction);
+
       if (lastSenderTransaction) {
         const previousTransaction = await Transaction.findOne({
           where: { sender_id },
@@ -70,8 +72,12 @@ export class TransactionService {
           raw: true,
         });
 
+        console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ previousTransaction:', previousTransaction);
+
         if (previousTransaction) {
           const expectedHash = TransactionService.generateHash(previousTransaction);
+
+          console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ expectedHash:', expectedHash);
 
           if (lastSenderTransaction.hash !== expectedHash) {
             throw this.httpException.badRequest('A última transação do sender foi comprometida');
@@ -84,7 +90,7 @@ export class TransactionService {
         receiver_id: receiver.id,
         amount,
         status: 'completed',
-        previoushash: lastSenderTransaction ? lastSenderTransaction.hash : '0',
+        previous_hash: lastSenderTransaction ? lastSenderTransaction.hash : '0',
       };
 
       transactionModel.hash = TransactionService.generateHash(transactionModel);
@@ -105,18 +111,40 @@ export class TransactionService {
         receiver_id: receiver.id,
       };
     });
-
-    return result;
   }
 
   async cancel(transaction_id: string, user: JwtUser) {
-    const result = await this.transactionRepository.sequelize.transaction(async (t) => {
+    return this.transactionRepository.sequelize.transaction(async (t) => {
       const lastTransaction = await Transaction.findOne({
-        where: { sender_id: user.user_id },
+        where: {
+          sender_id: user.user_id,
+          status: 'completed',
+        },
         order: [['created_at', 'DESC']],
         transaction: t,
         raw: true,
       });
+
+      if (lastTransaction?.id !== transaction_id) {
+        throw this.httpException.badRequest('Você só pode cancelar a última transação enviada');
+      }
+
+      lastTransaction.status = 'canceled';
+      lastTransaction.hash = TransactionService.generateHash(lastTransaction);
+
+      await Transaction.update(lastTransaction, {
+        where: { id: transaction_id },
+        transaction: t,
+      });
+
+      return {
+        transaction_id: lastTransaction.id,
+        transaction_hash: lastTransaction.hash,
+        transaction_amount: Number(lastTransaction.amount),
+        transaction_status: lastTransaction.status,
+        sender_name: user.person_name,
+        sender_id: user.user_id,
+      };
     });
   }
 
@@ -141,17 +169,13 @@ export class TransactionService {
     sender_id,
     receiver_id,
     amount,
-    previoushash,
+    previous_hash,
     created_at,
     status,
   }: Partial<Transaction>): string {
     const { BANK_SECRET } = process.env;
 
-    if (!BANK_SECRET) {
-      throw new Error('BANK_SECRET não configurado no ambiente');
-    }
-
-    const data = `${id}${sender_id}${receiver_id}${amount}${previoushash}${created_at}${status}${BANK_SECRET}`;
+    const data = `${id}${sender_id}${receiver_id}${Number(amount)}${previous_hash}${created_at.toISOString()}${status}${BANK_SECRET}`;
 
     return crypto.createHash('sha256').update(data).digest('hex');
   }

@@ -5,7 +5,7 @@ INSERT INTO
     receiver_id,
     amount,
     status,
-    previoushash,
+    previous_hash,
     hash,
     created_at,
     updated_at
@@ -18,7 +18,7 @@ VALUES
     0,
     'completed',
     '0',
-    '6d83a267c2c3c1ada28d9a4310413a0b3d4708a618c64466dde94f0bea740e9e',
+    '8bf6817c909dc16ae20d6759356cc6eae79413f13937b01f18c7ee27510373d2',
     '2025-02-21 17:31:42.632',
 		'2025-02-21 17:31:42.633178'
   ),
@@ -29,7 +29,7 @@ VALUES
     10000,
     'completed',
     '0',
-    'aab8ee4de61a608556e30b397c1f031756d63e71cf3e392149ecfa1d922f9c34',
+    '19bc416a7cc2777dd8817515c39a67d044cfd74045951ca0887c135d91c5f06b',
     '2025-02-21 17:33:42.632',
 		'2025-02-21 17:33:42.633178'
   );

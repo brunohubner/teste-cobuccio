@@ -44,7 +44,7 @@ export class TransactionService {
       }
 
       if (sender.id === receiver.id) {
-        throw this.httpException.badRequest('Não é possível realizar transferência para a mesma si mesmo');
+        throw this.httpException.badRequest('Não é possível realizar transferências para a mesma si mesmo');
       }
 
       const sender_id = user.user_id;
@@ -62,12 +62,8 @@ export class TransactionService {
         raw: true,
       });
 
-      console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ lastSenderTransaction:', lastSenderTransaction);
-
       if (lastSenderTransaction?.id) {
         const expectedHash = TransactionService.generateHash(lastSenderTransaction);
-
-        console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ expectedHash:', expectedHash);
 
         if (lastSenderTransaction.hash !== expectedHash) {
           throw this.httpException.badRequest('A última transação do sender foi comprometida');
@@ -75,24 +71,34 @@ export class TransactionService {
       }
 
       const transactionModel: Partial<Transaction> = {
-        id: crypto.randomUUID(),
         sender_id,
         receiver_id: receiver.id,
         amount,
-        status: 'completed',
+        status: 'pending',
+        hash: '0',
         previous_hash: lastSenderTransaction ? lastSenderTransaction.hash : '0',
       };
 
-      transactionModel.hash = TransactionService.generateHash(transactionModel);
+      // transactionModel.hash = TransactionService.generateHash(transactionModel);
 
-      const transaction = await Transaction.create(transactionModel, { transaction: t });
+      let transaction = await Transaction.create(transactionModel, { transaction: t });
 
-      const transactionJson = transaction.toJSON();
+      transaction = transaction.toJSON();
+
+      transaction.status = 'completed';
+      transaction.hash = TransactionService.generateHash(transaction);
+
+      console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ transaction:', transaction);
+
+      await Transaction.update(transaction, {
+        where: { id: transaction.id },
+        transaction: t,
+      });
 
       return {
-        transaction_id: transactionJson.id,
-        transaction_hash: transactionJson.hash,
-        transaction_amount: Number(transactionJson.amount),
+        transaction_id: transaction.id,
+        transaction_hash: transaction.hash,
+        transaction_amount: Number(transaction.amount),
         sender_name: user.person_name,
         sender_cpf: sender.cpf,
         sender_id: user.user_id,
@@ -105,6 +111,20 @@ export class TransactionService {
 
   async cancel(transaction_id: string, user: JwtUser) {
     return this.transactionRepository.sequelize.transaction(async (t) => {
+      const transaction = await Transaction.findOne({
+        where: { id: transaction_id },
+        transaction: t,
+        raw: true,
+      });
+
+      if (!transaction) {
+        throw this.httpException.badRequest('Transação não encontrada');
+      }
+
+      if (transaction.status !== 'completed') {
+        throw this.httpException.badRequest(`Transação não pode ser cancelada. status = ${transaction.status}`);
+      }
+
       const lastTransaction = await Transaction.findOne({
         where: {
           sender_id: user.user_id,
@@ -116,7 +136,7 @@ export class TransactionService {
       });
 
       if (lastTransaction?.id !== transaction_id) {
-        throw this.httpException.badRequest('Você só pode cancelar a última transação enviada');
+        throw this.httpException.badRequest('Você só pode cancelar a última transação enviada por você');
       }
 
       lastTransaction.status = 'canceled';
@@ -154,23 +174,18 @@ export class TransactionService {
     return Number(result[0].balance);
   }
 
-  static generateHash(dto: Partial<Transaction>): string {
+  static generateHash(dto: Partial<Transaction>, secret: string = process.env.BANK_SECRET): string {
     const {
       id,
       sender_id,
       receiver_id,
       amount,
       previous_hash,
+
       status,
     } = dto;
 
-    console.log('🚀 ~ TransactionService ~ generateHash ~ dto:', dto);
-
-    const { BANK_SECRET } = process.env;
-
-    console.log('🚀 ~ TransactionService ~ generateHash ~ BANK_SECRET:', BANK_SECRET);
-
-    const data = `${id}${sender_id}${receiver_id}${toFixed2(amount)}${previous_hash}${status}${BANK_SECRET}`;
+    const data = `${id}${sender_id}${receiver_id}${toFixed2(amount)}${previous_hash}${status}${secret}`;
 
     return crypto.createHash('sha256').update(data).digest('hex');
   }

@@ -16,7 +16,7 @@ export type TransactionStatus = 'pending' | 'completed' | 'canceled' | 'rejected
 
 @Scopes(() => ({}))
 @Table({
-  schema: 'public', tableName: 'transaction', updatedAt: false, createdAt: false,
+  schema: 'public', tableName: 'transaction', updatedAt: false,
 })
 export default class Transaction extends Model<Transaction> {
   @Column({

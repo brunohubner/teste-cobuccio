@@ -4,7 +4,7 @@ import { ApiResponseErrorSwagger } from '../swagger/api-response-error.swagger';
 export const API_RESPONSES: Record<string, ApiResponseOptions> = Object.freeze({
   BAD_REQUEST: {
     status: 400,
-    description: 'Erro de sintaxe JSON no corpo do request.',
+    description: 'Parâmetros inválidos',
     type: ApiResponseErrorSwagger,
   },
   UNAUTHORIZED: {

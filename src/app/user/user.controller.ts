@@ -45,7 +45,6 @@ export class UserController {
     type: CreateUserSwaggerResponse,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
-  @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)
   @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)
   async POST_Signup(@Body() body: CreateUserDto) {
     const data = await this.userService.signUp(body);
@@ -66,7 +65,6 @@ export class UserController {
     type: Object,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
-  @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)
   @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)
   async POST_Signin(@Body() body: SigninDto) {
     const data = await this.userService.signIn(body);
@@ -89,7 +87,6 @@ export class UserController {
     type: GetUserBalanceSwaggerResponse,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
-  @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)
   @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)
   async GET_Balance(
   @Req() { decodedJwt }: Request,

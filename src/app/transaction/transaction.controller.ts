@@ -3,7 +3,6 @@ import {
   Body,
   Controller,
   HttpCode,
-  Inject,
   Param,
   Post,
   Put,
@@ -23,7 +22,6 @@ import { API_RESPONSES } from '@/shared/constants/api-responses.const';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { AuthGuard } from '@/shared/auth/auth.guard';
-import { HttpException } from '@/shared/errors/http/http-exception.error';
 import { CreateTransactionSwaggerResponse } from './swagger/create-transaction.swagger';
 import { ValidateUuidParam } from '@/shared/pipes/validate-uuid-param.pipe';
 
@@ -32,8 +30,6 @@ import { ValidateUuidParam } from '@/shared/pipes/validate-uuid-param.pipe';
 export class TransactionController {
   constructor(
     private readonly transactionService: TransactionService,
-    @Inject(HttpException.name)
-    private readonly httpException: typeof HttpException,
   ) { }
 
   @Post()
@@ -51,7 +47,6 @@ export class TransactionController {
     type: CreateTransactionSwaggerResponse,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
-  @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)
   @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)
   async POST_CreateTransaction(
   @Req() { decodedJwt }: Request,
@@ -81,7 +76,6 @@ export class TransactionController {
     type: Object,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
-  @ApiResponse(API_RESPONSES.UNPROCESSABLE_ENTITY)
   @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)
   async PUT_Cancel(
   @Req() { decodedJwt }: Request,

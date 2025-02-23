@@ -118,7 +118,9 @@ describe('UserService', () => {
         password_confirmation: '@Pass1234',
       };
 
-      await expect(service.signUp(dto)).rejects.toThrow('Email informado já cadastrado no sistema, por favor, informe outro email');
+      const promise = service.signUp(dto);
+
+      await expect(promise).rejects.toThrow('Email informado já cadastrado no sistema, por favor, informe outro email');
     });
 
     it('deve lançar um erro se cpf já estiver cadastrado', async () => {
@@ -138,7 +140,9 @@ describe('UserService', () => {
         password_confirmation: '@Pass1234',
       };
 
-      await expect(service.signUp(dto)).rejects.toThrow('CPF informado já cadastrado no sistema, por favor, informe outro CPF');
+      const promise = service.signUp(dto);
+
+      await expect(promise).rejects.toThrow('CPF informado já cadastrado no sistema, por favor, informe outro CPF');
     });
   });
 
@@ -174,7 +178,9 @@ describe('UserService', () => {
 
       const dto: SigninDto = { email: 'invalid@example.com', password: '@Pass1234' };
 
-      await expect(service.signIn(dto)).rejects.toThrow('Email ou senha inválidos');
+      const promise = service.signIn(dto);
+
+      await expect(promise).rejects.toThrow('Email ou senha inválidos');
     });
 
     it('deve lançar um erro se a senha estiver incorreta', async () => {
@@ -190,7 +196,9 @@ describe('UserService', () => {
 
       const dto: SigninDto = { email: 'john@example.com', password: '@WrongPass123' };
 
-      await expect(service.signIn(dto)).rejects.toThrow('Email ou senha inválidos');
+      const promise = service.signIn(dto);
+
+      await expect(promise).rejects.toThrow('Email ou senha inválidos');
     });
   });
 

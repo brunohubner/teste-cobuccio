@@ -8,8 +8,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { createLogger } from 'winston';
-import { winstonConfig } from '@/config/winston.config';
+import { logger } from '../functions/logger';
 
 const JSONAPIError = require('jsonapi-serializer').Error;
 
@@ -41,8 +40,6 @@ export const isHTTPException = (
 export class JsonapiExceptionFilter implements ExceptionFilter {
   // eslint-disable-next-line class-methods-use-this
   catch(exception: unknown, host: ArgumentsHost) {
-    const logger = createLogger(winstonConfig);
-
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 

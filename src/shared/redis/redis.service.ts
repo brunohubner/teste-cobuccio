@@ -3,26 +3,23 @@ import * as Redis from 'ioredis';
 import {
   Inject, Injectable, OnModuleDestroy, OnModuleInit,
 } from '@nestjs/common';
-import { createLogger } from 'winston';
-import { winstonConfig } from '@/config/winston.config';
+import { logger } from '../functions/logger';
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
-  private readonly logger = createLogger(winstonConfig);
-
   constructor(
     @Inject('REDIS_CLIENT') private readonly redisClient: Redis.Redis,
 
   ) {}
 
   async onModuleInit() {
-    this.redisClient.on('connect', () => this.logger.log({
+    this.redisClient.on('connect', () => logger.info({
       message: 'Redis connected',
       level: 'info',
       context: 'RedisService',
     }));
 
-    this.redisClient.on('error', (err) => this.logger.error('Redis error:', err));
+    this.redisClient.on('error', (err) => logger.error('Redis error:', err));
   }
 
   async set(key: string, value: any, ttl?: number) {
@@ -42,7 +39,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    this.logger.log({
+    logger.log({
       message: 'Closing Redis connection',
       level: 'info',
       context: 'RedisService',

@@ -1,7 +1,4 @@
-import { createLogger } from 'winston';
-import { winstonConfig } from '@/config/winston.config';
-
-const logger = createLogger(winstonConfig);
+import { logger } from '@/shared/functions/logger';
 
 export const responseLog = (body: any, className: string) => {
   logger.log({

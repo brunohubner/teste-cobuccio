@@ -53,14 +53,14 @@ export default class User extends Model<User> {
   @CreatedAt
   @Column({
     allowNull: false,
-    field: 'created_at',
+    field: 'createdAt',
   })
   declare readonly createdAt: Date;
 
   @UpdatedAt
   @Column({
     allowNull: false,
-    field: 'updated_at',
+    field: 'updatedAt',
   })
   declare updatedAt: Date;
 }

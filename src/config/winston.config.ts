@@ -1,9 +1,11 @@
+import { ElasticsearchTransport } from 'winston-elasticsearch';
+import * as clc from 'cli-color';
+import * as winston from 'winston';
+
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModuleOptions,
 } from 'nest-winston';
-import * as clc from 'cli-color';
-import * as winston from 'winston';
 
 import { inspect } from 'util';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -55,6 +57,31 @@ const customFormat = winston.format((info, opts: any = {}) => {
   return info;
 });
 
+// Configuração do transporte para o Elasticsearch
+const elasticTransport = new ElasticsearchTransport({
+  level: 'info',
+  clientOpts: {
+    node: `${process.env.ELASTIC_HOST}:${process.env.ELASTIC_PORT}`,
+    auth: {
+      username: process.env.ELASTIC_USER,
+      password: process.env.ELASTIC_PASS,
+    },
+    maxRetries: 5,
+    requestTimeout: 10000,
+  },
+
+  buffering: true,
+  bufferLimit: 1000,
+  flushInterval: 2000,
+
+  indexPrefix: 'cobuccio-logs2',
+  indexSuffixPattern: 'YYYY-MM-DD',
+  ensureIndexTemplate: true,
+
+  waitForActiveShards: 1,
+  retryLimit: 3,
+});
+
 export const winstonConfig: WinstonModuleOptions = {
   levels: winston.config.npm.levels,
   level: process.env.LOG_LEVEL || 'verbose',
@@ -65,6 +92,7 @@ export const winstonConfig: WinstonModuleOptions = {
         customFormat({ colorize: !isProd }),
       ),
     }),
+    elasticTransport,
   ],
 };
 
@@ -78,5 +106,6 @@ export const winstonConfigForMain: WinstonModuleOptions = {
         nestWinstonModuleUtilities.format.nestLike(),
       ),
     }),
+    elasticTransport,
   ],
 };

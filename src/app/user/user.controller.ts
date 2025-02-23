@@ -37,7 +37,12 @@ export class UserController {
   @HttpCode(201)
   @ApiOperation({
     summary: 'Criar um novo usuário no sistema',
-    description: 'Criar um novo usuário no sistema informando os dados necessarios corretamente',
+    description: `<div>
+      <p>Alguns CPFs matematicamente válidos gerados em https://4devs.com.br para usar no cadastro:</p>
+      <p>
+      45340701018 - 57124174058 - 59012885051 - 87704095013 - 58982812075 - 34929443024 - 09539768071 - 49006369080
+      </p>
+    </div>`,
   })
   @ApiResponse({
     status: 201,

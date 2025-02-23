@@ -17,6 +17,8 @@ export class TransactionService {
     @Inject(HttpException.name)
     private readonly httpException: typeof HttpException,
     @Inject(User.name)
+    private readonly userRepository: typeof User,
+    @Inject(Transaction.name)
     private readonly transactionRepository: typeof Transaction,
   ) { }
 
@@ -28,13 +30,13 @@ export class TransactionService {
     user: JwtUser,
   ): Promise<CreateTransactionSwaggerData> {
     return this.transactionRepository.sequelize.transaction(async (t) => {
-      const sender = await User.findOne({
+      const sender = await this.userRepository.findOne({
         where: { id: user.user_id },
         transaction: t,
         raw: true,
       });
 
-      const receiver = await User.findOne({
+      const receiver = await this.userRepository.findOne({
         where: { cpf: receiver_cpf },
         transaction: t,
         raw: true,
@@ -58,7 +60,7 @@ export class TransactionService {
 
       await this.validateTransactionHistory(sender_id, t);
 
-      const lastSenderTransaction = await Transaction.findOne({
+      const lastSenderTransaction = await this.transactionRepository.findOne({
         where: { sender_id },
         order: [['created_at', 'DESC']],
         transaction: t,
@@ -74,14 +76,15 @@ export class TransactionService {
         previous_hash: lastSenderTransaction?.hash ? lastSenderTransaction.hash : '0',
       };
 
-      let transaction = await Transaction.create(transactionModel, { transaction: t });
+      let transaction = await this.transactionRepository
+        .create(transactionModel, { transaction: t });
 
       transaction = transaction.toJSON();
 
       transaction.status = 'completed';
       transaction.hash = TransactionService.generateHash(transaction);
 
-      await Transaction.update({
+      await this.transactionRepository.update({
         status: 'completed',
         hash: transaction.hash,
       }, {
@@ -105,7 +108,7 @@ export class TransactionService {
 
   async cancel(transaction_id: string, user: JwtUser) {
     return this.transactionRepository.sequelize.transaction(async (t) => {
-      const transaction = await Transaction.findOne({
+      const transaction = await this.transactionRepository.findOne({
         where: { id: transaction_id },
         transaction: t,
         raw: true,
@@ -119,7 +122,7 @@ export class TransactionService {
         throw this.httpException.badRequest(`Essa transação não pode ser cancelada. status = ${transaction.status}`);
       }
 
-      const lastTransaction = await Transaction.findOne({
+      const lastTransaction = await this.transactionRepository.findOne({
         where: {
           sender_id: user.user_id,
           status: 'completed',
@@ -145,7 +148,7 @@ export class TransactionService {
 
       transaction.hash = TransactionService.generateHash(transaction);
 
-      await Transaction.update({
+      await this.transactionRepository.update({
         status,
         hash: transaction.hash,
       }, {
@@ -184,7 +187,7 @@ export class TransactionService {
     user_id: string,
     t: SequelizeTransaction = null,
   ) {
-    const transactions = await Transaction.findAll({
+    const transactions = await this.transactionRepository.findAll({
       where: {
         sender_id: user_id,
       },

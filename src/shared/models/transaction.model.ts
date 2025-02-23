@@ -16,7 +16,7 @@ export type TransactionStatus = 'pending' | 'completed' | 'canceled' | 'rejected
 
 @Scopes(() => ({}))
 @Table({
-  schema: 'public',
+  schema: 'cobuccio',
   tableName: 'transaction',
   timestamps: true,
   // updatedAt: true,

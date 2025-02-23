@@ -10,7 +10,7 @@ import {
 
 @Scopes(() => ({}))
 @Table({
-  schema: 'public', tableName: 'user', updatedAt: false,
+  schema: 'cobuccio', tableName: 'user', updatedAt: false,
 })
 export default class User extends Model<User> {
   @Column({

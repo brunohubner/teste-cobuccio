@@ -1,6 +1,6 @@
 -- DROP FUNCTION IF EXISTS vink.uuid_generate_v4();
 
-CREATE OR REPLACE FUNCTION public.uuid_generate_v4(
+CREATE OR REPLACE FUNCTION cobuccio.uuid_generate_v4(
 	)
     RETURNS uuid
     LANGUAGE 'c'
@@ -9,5 +9,5 @@ CREATE OR REPLACE FUNCTION public.uuid_generate_v4(
 AS '$libdir/uuid-ossp', 'uuid_generate_v4'
 ;
 
-ALTER FUNCTION public.uuid_generate_v4()
+ALTER FUNCTION cobuccio.uuid_generate_v4()
     OWNER TO "MasterPostgres";

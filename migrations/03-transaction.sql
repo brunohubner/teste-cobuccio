@@ -1,7 +1,7 @@
--- DROP TABLE IF EXISTS public.transaction;
+-- DROP TABLE IF EXISTS cobuccio.transaction;
 
-CREATE TABLE IF NOT EXISTS public.transaction (
-	id character varying(36) COLLATE pg_catalog."default" NOT NULL DEFAULT public.uuid_generate_v4(),
+CREATE TABLE IF NOT EXISTS cobuccio.transaction (
+	id character varying(36) COLLATE pg_catalog."default" NOT NULL DEFAULT cobuccio.uuid_generate_v4(),
 	sender_id character varying(36) COLLATE pg_catalog."default" NOT NULL,
 	receiver_id character varying(36) COLLATE pg_catalog."default" NOT NULL,
 	amount numeric(10,2) NOT NULL,
@@ -14,15 +14,15 @@ CREATE TABLE IF NOT EXISTS public.transaction (
 	CONSTRAINT transaction_pkey PRIMARY KEY (id),
 
 	CONSTRAINT transaction_sender_id_fkey FOREIGN KEY (sender_id)
-		REFERENCES public.user (id) MATCH SIMPLE
+		REFERENCES cobuccio.user (id) MATCH SIMPLE
 		ON UPDATE NO ACTION
 		ON DELETE NO ACTION,
 
 	CONSTRAINT transaction_receiver_id_fkey FOREIGN KEY (receiver_id)
-		REFERENCES public.user (id) MATCH SIMPLE
+		REFERENCES cobuccio.user (id) MATCH SIMPLE
 		ON UPDATE NO ACTION
 		ON DELETE NO ACTION
 ) TABLESPACE pg_default;
 
 ALTER TABLE
-	IF EXISTS public.transaction OWNER to "MasterPostgres";
+	IF EXISTS cobuccio.transaction OWNER to "MasterPostgres";

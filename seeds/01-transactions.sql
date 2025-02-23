@@ -1,5 +1,5 @@
 INSERT INTO
-  public.transaction(
+  cobuccio.transaction(
     id,
     sender_id,
     receiver_id,

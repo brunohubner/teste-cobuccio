@@ -1,5 +1,5 @@
 INSERT INTO
-	public.'user'(
+	cobuccio.'user'(
 		id,
 		person_name,
 		email,

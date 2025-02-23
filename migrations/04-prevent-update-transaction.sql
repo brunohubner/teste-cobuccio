@@ -15,6 +15,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER transaction_immutable_fields
-BEFORE UPDATE ON public.transaction
+BEFORE UPDATE ON cobuccio.transaction
 FOR EACH ROW
 EXECUTE FUNCTION prevent_transaction_update();

@@ -83,9 +83,10 @@ export class TransactionService {
       transaction.status = 'completed';
       transaction.hash = TransactionService.generateHash(transaction);
 
-      console.log('🚀 ~ TransactionService ~ returnthis.transactionRepository.sequelize.transaction ~ transaction:', transaction);
-
-      await Transaction.update(transaction, {
+      await Transaction.update({
+        status: 'completed',
+        hash: transaction.hash,
+      }, {
         where: { id: transaction.id },
         transaction: t,
       });
@@ -136,26 +137,29 @@ export class TransactionService {
 
       const receiverBalance = await this.getBalance(transaction.receiver_id, t);
 
-      if (receiverBalance < transaction.amount) {
+      if (receiverBalance < Number(transaction.amount)) {
         throw this.httpException.badRequest('Não é possivel cancelar pois o não há saldo suficiente na conta do receiver');
       }
 
       const status = 'canceled';
-      const hash = TransactionService.generateHash(lastTransaction);
+
+      transaction.status = status;
+
+      transaction.hash = TransactionService.generateHash(transaction);
 
       await Transaction.update({
         status,
-        hash,
+        hash: transaction.hash,
       }, {
         where: { id: transaction_id },
         transaction: t,
       });
 
       return {
-        transaction_id: lastTransaction.id,
-        transaction_hash: lastTransaction.hash,
-        transaction_amount: Number(lastTransaction.amount),
-        transaction_status: lastTransaction.status,
+        transaction_id: transaction.id,
+        transaction_hash: transaction.hash,
+        transaction_amount: Number(transaction.amount),
+        transaction_status: transaction.status,
         sender_name: user.person_name,
         sender_id: user.user_id,
       };
@@ -165,9 +169,9 @@ export class TransactionService {
   async getBalance(user_id: string, t: SequelizeTransaction = null): Promise<number> {
     const sql = `--sql
       SELECT
-        COALESCE(SUM(CASE WHEN receiver_id = :user_id THEN amount ELSE 0 END), 0)
-        - COALESCE(SUM(CASE WHEN sender_id = :user_id THEN amount ELSE 0 END), 0)
-      AS balance FROM transaction WHERE status = 'completed';`;
+        COALESCE(SUM(CASE WHEN tr.receiver_id = :user_id THEN tr.amount ELSE 0 END), 0)
+        - COALESCE(SUM(CASE WHEN tr.sender_id = :user_id THEN tr.amount ELSE 0 END), 0)
+      AS balance FROM cobuccio.transaction as tr WHERE tr.status = 'completed';`;
 
     const result: any[] = await this.transactionRepository.sequelize.query(sql, {
       replacements: { user_id },
@@ -178,14 +182,13 @@ export class TransactionService {
     return Number(result[0].balance);
   }
 
-  async validateTransactionHistory(
+  private async validateTransactionHistory(
     user_id: string,
     t: SequelizeTransaction = null,
   ) {
     const transactions = await Transaction.findAll({
       where: {
         sender_id: user_id,
-        status: 'completed',
       },
       order: [['created_at', 'ASC']],
       transaction: t,
@@ -205,14 +208,13 @@ export class TransactionService {
     }
   }
 
-  static generateHash(dto: Partial<Transaction>): string {
+  private static generateHash(dto: Partial<Transaction>): string {
     const {
       id,
       sender_id,
       receiver_id,
       amount,
       previous_hash,
-
       status,
     } = dto;
 

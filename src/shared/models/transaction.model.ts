@@ -72,7 +72,7 @@ export default class Transaction extends Model<Transaction> {
   @Column({
     allowNull: false,
   })
-  declare readonly created_at: Date;
+  readonly created_at: Date;
 
   @UpdatedAt
   @Column({

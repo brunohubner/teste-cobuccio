@@ -27,45 +27,33 @@ export const PostgresProvider: Provider = {
   },
 };
 
-export const InMemorySQLiteProvider: Provider = {
+export const TestPostgresProvider: Provider = {
   provide: 'SEQUELIZE',
   useFactory: async () => {
     const sequelize = new Sequelize({
-      dialect: 'sqlite',
-      storage: ':memory:',
+      dialect: 'postgres',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      database: 'cobuccio_test',
       models: [modelsPath],
       logging: process.env.SEQ_LOGGING?.toLowerCase() === 'true',
     });
 
-    try {
-      // Aguarda conexão com o banco de dados
-      await sequelize.authenticate();
-      console.log('Banco de dados conectado com sucesso.');
+    await sequelize.authenticate();
 
-      // Executar migrations SQL manualmente
-      const migrationsFile = path.resolve(__dirname, '../../../migrations/migrations.sql');
+    await sequelize.query('DROP SCHEMA IF EXISTS cobuccio CASCADE;');
 
-      if (fs.existsSync(migrationsFile)) {
-        const migrationsSQL = fs.readFileSync(migrationsFile, 'utf8');
-        await sequelize.query(migrationsSQL);
-        console.log('Migrations aplicadas com sucesso.');
-      } else {
-        console.warn(`Arquivo de migrations não encontrado: ${migrationsFile}`);
-      }
+    const migrationsFile = path.resolve(__dirname, '../../../migrations/migrations.sql');
+    const migrationsSQL = fs.readFileSync(migrationsFile, 'utf8');
 
-      // Executar seeds SQL manualmente
-      const seedsFile = path.resolve(__dirname, '../../../seeds/seeds.sql');
+    await sequelize.query(migrationsSQL);
 
-      if (fs.existsSync(seedsFile)) {
-        const seedsSQL = fs.readFileSync(seedsFile, 'utf8');
-        await sequelize.query(seedsSQL);
-        console.log('Seeds aplicados com sucesso.');
-      } else {
-        console.warn(`Arquivo de seeds não encontrado: ${seedsFile}`);
-      }
-    } catch (error) {
-      console.error('Erro ao configurar banco de dados:', error);
-    }
+    const seedsFile = path.resolve(__dirname, '../../../seeds/seeds.sql');
+    const seedsSQL = fs.readFileSync(seedsFile, 'utf8');
+
+    await sequelize.query(seedsSQL);
 
     return sequelize;
   },

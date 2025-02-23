@@ -1,8 +1,8 @@
 import { Module, Provider } from '@nestjs/common';
-import { InMemorySQLiteProvider, PostgresProvider } from './database.provider';
+import { PostgresProvider, TestPostgresProvider } from './database.provider';
 
 const DbProvider: Provider = process.env.NODE_ENV === 'test'
-  ? InMemorySQLiteProvider
+  ? TestPostgresProvider
   : PostgresProvider;
 
 @Module({

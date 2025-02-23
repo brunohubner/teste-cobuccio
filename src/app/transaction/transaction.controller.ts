@@ -78,7 +78,7 @@ export class TransactionController {
 
     const data = await this.transactionService.createTransaction(body, user);
 
-    // await this.redisService.del(lockKey); // comentado propositalmente
+    await this.redisService.del(lockKey); // comentado propositalmente
 
     return { data };
   }

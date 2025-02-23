@@ -1,17 +1,10 @@
 import * as request from 'supertest';
 
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { AppModule } from '@/app.module';
-import { AuthService } from '@/shared/auth/auth.service';
-import { TransactionService } from '@/app/transaction/transaction.service';
-import { RedisService } from '@/shared/redis/redis.service';
+import { INestApplication } from '@nestjs/common';
+import { App } from './app.setup';
 
 describe('TransactionController (e2e)', () => {
   let app: INestApplication;
-  let authService: AuthService;
-  let transactionService: TransactionService;
-  let redisService: RedisService;
   let jwtBruno: string;
 
   const user1 = {
@@ -45,17 +38,7 @@ describe('TransactionController (e2e)', () => {
   let lastTransaction: string = null;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe());
-    await app.init();
-
-    authService = moduleFixture.get<AuthService>(AuthService);
-    transactionService = moduleFixture.get<TransactionService>(TransactionService);
-    redisService = moduleFixture.get<RedisService>(RedisService);
+    app = await App.getApp();
 
     const response = await request(app.getHttpServer())
       .post('/api/v1/user/signin')

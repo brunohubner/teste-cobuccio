@@ -140,10 +140,13 @@ export class TransactionService {
         throw this.httpException.badRequest('Não é possivel cancelar pois o não há saldo suficiente na conta do receiver');
       }
 
-      lastTransaction.status = 'canceled';
-      lastTransaction.hash = TransactionService.generateHash(lastTransaction);
+      const status = 'canceled';
+      const hash = TransactionService.generateHash(lastTransaction);
 
-      await Transaction.update(lastTransaction, {
+      await Transaction.update({
+        status,
+        hash,
+      }, {
         where: { id: transaction_id },
         transaction: t,
       });

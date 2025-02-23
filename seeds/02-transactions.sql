@@ -7,8 +7,7 @@ INSERT INTO
     status,
     previous_hash,
     hash,
-    created_at,
-    updated_at
+    created_at
   )
 VALUES
   (
@@ -19,8 +18,7 @@ VALUES
     'completed',
     '0',
     'add425ce5aa042cea38a3f6ab9cc06e123e95304ea0f18267431807740dd4f24',
-    '2025-02-21 17:31:42.632',
-		'2025-02-21 17:31:42.633178'
+    '2025-02-21 17:31:42.632'
   ),
   (
     'a7172eb5-80ca-4f7e-ac78-aa8a8c0ca68a',
@@ -30,6 +28,5 @@ VALUES
     'completed',
     '0',
     '60e26bc961ed5e29bb491955f4e23a552c46c19eeac17809df90d86c8759fbcf',
-    '2025-02-21 17:33:42.632',
-		'2025-02-21 17:33:42.633178'
+    '2025-02-21 17:33:42.632'
   );

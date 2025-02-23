@@ -18,6 +18,9 @@ export type TransactionStatus = 'pending' | 'completed' | 'canceled' | 'rejected
 @Table({
   schema: 'cobuccio',
   tableName: 'transaction',
+  updatedAt: 'updated_at',
+  createdAt: 'created_at',
+  timestamps: true,
 })
 export default class Transaction extends Model<Transaction> {
   @Column({
@@ -75,5 +78,5 @@ export default class Transaction extends Model<Transaction> {
   @Column({
     allowNull: false,
   })
-  declare updated_at: Date;
+    updated_at: Date;
 }

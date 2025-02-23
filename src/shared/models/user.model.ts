@@ -10,7 +10,11 @@ import {
 
 @Scopes(() => ({}))
 @Table({
-  schema: 'cobuccio', tableName: 'user',
+  schema: 'cobuccio',
+  tableName: 'user',
+  updatedAt: 'updated_at',
+  createdAt: 'created_at',
+  timestamps: true,
 })
 export default class User extends Model<User> {
   @Column({
@@ -54,11 +58,11 @@ export default class User extends Model<User> {
   @Column({
     allowNull: false,
   })
-  declare readonly created_at: Date;
+  readonly created_at: Date;
 
   @UpdatedAt
   @Column({
     allowNull: false,
   })
-  declare updated_at: Date;
+    updated_at: Date;
 }

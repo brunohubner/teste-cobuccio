@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import * as crypto from 'crypto';
 
 import { Inject, Injectable } from '@nestjs/common';
@@ -55,6 +56,8 @@ export class TransactionService {
         throw this.httpException.badRequest('Saldo insuficiente');
       }
 
+      await this.validateTransactionHistory(sender_id, t);
+
       const lastSenderTransaction = await Transaction.findOne({
         where: { sender_id },
         order: [['created_at', 'DESC']],
@@ -62,21 +65,13 @@ export class TransactionService {
         raw: true,
       });
 
-      if (lastSenderTransaction?.id) {
-        const expectedHash = TransactionService.generateHash(lastSenderTransaction);
-
-        if (lastSenderTransaction.hash !== expectedHash) {
-          throw this.httpException.badRequest('A última transação do sender foi comprometida');
-        }
-      }
-
       const transactionModel: Partial<Transaction> = {
         sender_id,
         receiver_id: receiver.id,
         amount,
         status: 'pending',
         hash: '0',
-        previous_hash: lastSenderTransaction ? lastSenderTransaction.hash : '0',
+        previous_hash: lastSenderTransaction?.hash ? lastSenderTransaction.hash : '0',
       };
 
       // transactionModel.hash = TransactionService.generateHash(transactionModel);
@@ -139,6 +134,12 @@ export class TransactionService {
         throw this.httpException.badRequest('Você só pode cancelar a última transação enviada por você');
       }
 
+      const receiverBalance = await this.getBalance(transaction.receiver_id, t);
+
+      if (receiverBalance < transaction.amount) {
+        throw this.httpException.badRequest('Não é possivel cancelar pois o não há saldo suficiente na conta do receiver');
+      }
+
       lastTransaction.status = 'canceled';
       lastTransaction.hash = TransactionService.generateHash(lastTransaction);
 
@@ -174,7 +175,34 @@ export class TransactionService {
     return Number(result[0].balance);
   }
 
-  static generateHash(dto: Partial<Transaction>, secret: string = process.env.BANK_SECRET): string {
+  async validateTransactionHistory(
+    user_id: string,
+    t: SequelizeTransaction = null,
+  ) {
+    const transactions = await Transaction.findAll({
+      where: {
+        sender_id: user_id,
+        status: 'completed',
+      },
+      order: [['created_at', 'ASC']],
+      transaction: t,
+      raw: true,
+    });
+
+    let previousHash = '0';
+
+    for (const transaction of transactions) {
+      const expectedHash = TransactionService.generateHash(transaction);
+
+      if (transaction.hash !== expectedHash || transaction.previous_hash !== previousHash) {
+        throw this.httpException.badRequest(`Identificado transação adulterada. id=${transaction.id}`);
+      }
+
+      previousHash = transaction.hash;
+    }
+  }
+
+  static generateHash(dto: Partial<Transaction>): string {
     const {
       id,
       sender_id,
@@ -184,6 +212,8 @@ export class TransactionService {
 
       status,
     } = dto;
+
+    const secret = process.env.BANK_SECRET;
 
     const data = `${id}${sender_id}${receiver_id}${toFixed2(amount)}${previous_hash}${status}${secret}`;
 

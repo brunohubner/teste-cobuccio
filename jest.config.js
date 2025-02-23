@@ -17,6 +17,9 @@ module.exports = {
 
 		'!<rootDir>/src/config/**',
 
+		'!<rootDir>/src/**/dtos/**',
+		'!<rootDir>/src/**/swagger/**',
+
 		'!<rootDir>/src/shared/constants/**',
 		'!<rootDir>/src/shared/database/**',
 		'!<rootDir>/src/shared/styles/**',

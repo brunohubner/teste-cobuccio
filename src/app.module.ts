@@ -10,6 +10,7 @@ import { DatabaseModule } from './shared/database/database.module';
 import { HttpExceptionModule } from './shared/errors/http/http-exception.module';
 import { UserModule } from './app/user/user.module';
 import { TransactionModule } from './app/transaction/transaction.module';
+import { RedisModule } from './shared/redis/redis.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TransactionModule } from './app/transaction/transaction.module';
 
     HttpExceptionModule,
     DatabaseModule,
+    RedisModule,
     AuthModule,
 
     UserModule,

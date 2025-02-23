@@ -5,11 +5,14 @@ import { TransactionService } from './transaction.service';
 import { TransactionProvider } from './transaction.provider';
 import { HttpExceptionModule } from '@/shared/errors/http/http-exception.module';
 import { UserModule } from '../user/user.module';
+import { RedisModule } from '@/shared/redis/redis.module';
 
 @Module({
   imports: [
     HttpExceptionModule,
     AuthModule,
+
+    RedisModule,
 
     forwardRef(() => UserModule),
   ],

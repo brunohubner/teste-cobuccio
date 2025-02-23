@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   HttpCode,
+  Inject,
   Param,
   Post,
   Put,
@@ -24,12 +25,18 @@ import { CreateTransactionDto } from './dtos/create-transaction.dto';
 import { AuthGuard } from '@/shared/auth/auth.guard';
 import { CreateTransactionSwaggerResponse } from './swagger/create-transaction.swagger';
 import { ValidateUuidParam } from '@/shared/pipes/validate-uuid-param.pipe';
+import { RedisService } from '@/shared/redis/redis.service';
+import { HttpException } from '@/shared/errors/http/http-exception.error';
 
 @ApiTags('Transacoes')
 @Controller('/api/v1/transaction')
 export class TransactionController {
   constructor(
+    @Inject(HttpException.name)
+    private readonly httpException: typeof HttpException,
     private readonly transactionService: TransactionService,
+    private readonly redisService: RedisService,
+
   ) { }
 
   @Post()
@@ -53,10 +60,27 @@ export class TransactionController {
     @Body() body: CreateTransactionDto,
   ) {
     const { user } = decodedJwt;
+    const { user_id } = user;
 
-    const data = await this.transactionService.createTransaction(body, user);
+    const lockKey = `lock:transaction:${user_id}`;
 
-    return { data };
+    const locked = await this.redisService.get(lockKey);
+
+    const lockSecondsTTl = 30;
+
+    if (locked) {
+      throw this.httpException
+        .badRequest(`Aguarde ${lockSecondsTTl} segundos antes de realizar uma nova transação`);
+    }
+
+    await this.redisService.set(lockKey, true, lockSecondsTTl * 1000);
+
+    // const data = await this.transactionService.createTransaction(body, user);
+
+    // await this.redisService.del(lockKey);
+
+    // return { data };
+    return { ok: true };
   }
 
   @Put(':transaction_id/cancel')

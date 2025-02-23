@@ -65,8 +65,8 @@ export class TransactionController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Solicitar cancelemnto da ultima transação enviada pelo usuário',
-    description: `<p>Só é possivel solicitar cancelamento da última transação enviada pelo usuário.</p>
+    summary: 'Solicitar cancelamento da ultima transação enviada pelo usuário auntenticado',
+    description: `<p>Só é possivel solicitar cancelamento da última transação enviada pelo usuário auntenticado.</p>
       </br>
       <p>Se o usuário que recebeu o dinheiro tiver um valor menor que o valor da transação, a transação não será cancelada.</p>`,
   })

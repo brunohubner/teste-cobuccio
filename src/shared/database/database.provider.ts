@@ -37,17 +37,35 @@ export const InMemorySQLiteProvider: Provider = {
       logging: process.env.SEQ_LOGGING?.toLowerCase() === 'true',
     });
 
-    await sequelize.sync();
+    try {
+      // Aguarda conexão com o banco de dados
+      await sequelize.authenticate();
+      console.log('Banco de dados conectado com sucesso.');
 
-    const migrationsFile = path.resolve(__dirname, '../../../migrations/migrations.sql');
-    const migrations = fs.readFileSync(migrationsFile, 'utf8');
+      // Executar migrations SQL manualmente
+      const migrationsFile = path.resolve(__dirname, '../../../migrations/migrations.sql');
 
-    await sequelize.query(migrations);
+      if (fs.existsSync(migrationsFile)) {
+        const migrationsSQL = fs.readFileSync(migrationsFile, 'utf8');
+        await sequelize.query(migrationsSQL);
+        console.log('Migrations aplicadas com sucesso.');
+      } else {
+        console.warn(`Arquivo de migrations não encontrado: ${migrationsFile}`);
+      }
 
-    const seedsFile = path.resolve(__dirname, '../../../seeds/seeds.sql');
-    const seeds = fs.readFileSync(seedsFile, 'utf8');
+      // Executar seeds SQL manualmente
+      const seedsFile = path.resolve(__dirname, '../../../seeds/seeds.sql');
 
-    await sequelize.query(seeds);
+      if (fs.existsSync(seedsFile)) {
+        const seedsSQL = fs.readFileSync(seedsFile, 'utf8');
+        await sequelize.query(seedsSQL);
+        console.log('Seeds aplicados com sucesso.');
+      } else {
+        console.warn(`Arquivo de seeds não encontrado: ${seedsFile}`);
+      }
+    } catch (error) {
+      console.error('Erro ao configurar banco de dados:', error);
+    }
 
     return sequelize;
   },

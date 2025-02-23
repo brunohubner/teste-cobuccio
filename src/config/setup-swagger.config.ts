@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { customCss } from '@/shared/styles/swaggerDark';
 
 const description = `<div>
   <p>
@@ -18,7 +17,7 @@ const description = `<div>
   <br />
 
   <p>Todo novo usuário cadastrado possui saldo zerado. Após criar um ou mais usuários no sistema</p>
-  <p>faça login com o usuário pré cadastrado de email = <strong>bruno@domain.com</strong> e senha = <strong>@Pass12334</strong></p>
+  <p>faça login com o usuário pré cadastrado de email = <strong>bruno@domain.com</strong> e senha = <strong>@Pass1234</strong></p>
   <p>Esse usuário possui 10 mil de saldo, use esse saldo para enviar transações para os outros usuários.</p>
 </div>`;
 
@@ -38,7 +37,7 @@ export function setupSwagger(app: INestApplication) {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document, {
-    customCss,
+    // customCss,
     customSiteTitle: 'API Transacional Cobuccio',
   });
 }

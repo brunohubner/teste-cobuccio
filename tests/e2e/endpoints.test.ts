@@ -27,6 +27,9 @@ describe('TransactionController (e2e)', () => {
     transactionService = moduleFixture.get<TransactionService>(TransactionService);
     redisService = moduleFixture.get<RedisService>(RedisService);
 
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((resolve) => setTimeout(resolve, 60 * 60 * 1000));
+
     // Simula login para obter token
     const response = await request(app.getHttpServer())
       .post('/api/v1/user/signin')

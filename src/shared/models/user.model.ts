@@ -10,7 +10,7 @@ import {
 
 @Scopes(() => ({}))
 @Table({
-  schema: 'cobuccio',
+  schema: null,
   tableName: 'user',
   updatedAt: 'updated_at',
   createdAt: 'created_at',

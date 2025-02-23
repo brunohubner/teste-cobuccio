@@ -7,8 +7,8 @@ BEGIN
     OLD.receiver_id <> NEW.receiver_id OR 
     -- OLD.amount <> NEW.amount OR // comentado de propósito.
     OLD.previous_hash <> NEW.previous_hash OR 
-    OLD.created_at <> NEW.created_at THEN
-    RAISE EXCEPTION 'Os campos id, sender_id, receiver_id, previous_hash e created_at não podem ser alterados';
+    OLD.createdAt <> NEW.createdAt THEN
+    RAISE EXCEPTION 'Os campos id, sender_id, receiver_id, previous_hash e createdAt não podem ser alterados';
   END IF;
   RETURN NEW;
 END;

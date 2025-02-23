@@ -6,8 +6,8 @@ INSERT INTO
 		cpf,
 		hashed_password,
 		birth_date,
-		created_at,
-		updated_at
+		createdAt,
+		updatedAt
 	)
 VALUES
 	(

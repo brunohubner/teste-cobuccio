@@ -16,7 +16,11 @@ export type TransactionStatus = 'pending' | 'completed' | 'canceled' | 'rejected
 
 @Scopes(() => ({}))
 @Table({
-  schema: 'public', tableName: 'transaction', updatedAt: false,
+  schema: 'public',
+  tableName: 'transaction',
+  timestamps: true,
+  // updatedAt: true,
+  // createdAt: false,
 })
 export default class Transaction extends Model<Transaction> {
   @Column({
@@ -65,10 +69,16 @@ export default class Transaction extends Model<Transaction> {
     hash: string;
 
   @CreatedAt
-  @Column
-    created_at: Date;
+  @Column({
+    allowNull: false,
+    field: 'created_at',
+  })
+  declare readonly createdAt: Date;
 
   @UpdatedAt
-  @Column
-    updated_at: Date;
+  @Column({
+    allowNull: false,
+    field: 'updated_at',
+  })
+  declare updatedAt: Date;
 }

@@ -60,7 +60,7 @@ export class TransactionService {
 
       const lastSenderTransaction = await Transaction.findOne({
         where: { sender_id },
-        order: [['createdAt', 'DESC']],
+        order: [['created_at', 'DESC']],
         transaction: t,
         raw: true,
       });
@@ -125,7 +125,7 @@ export class TransactionService {
           sender_id: user.user_id,
           status: 'completed',
         },
-        order: [['createdAt', 'DESC']],
+        order: [['created_at', 'DESC']],
         transaction: t,
         raw: true,
       });
@@ -187,7 +187,7 @@ export class TransactionService {
         sender_id: user_id,
         status: 'completed',
       },
-      order: [['createdAt', 'ASC']],
+      order: [['created_at', 'ASC']],
       transaction: t,
       raw: true,
     });

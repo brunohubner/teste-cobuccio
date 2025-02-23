@@ -7,8 +7,8 @@ INSERT INTO
     status,
     previous_hash,
     hash,
-    createdAt,
-    updatedAt
+    created_at,
+    updated_at
   )
 VALUES
   (

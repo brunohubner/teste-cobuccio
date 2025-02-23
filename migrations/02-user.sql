@@ -1,4 +1,4 @@
--- DROP TABLE IF EXISTS cobuccio.user;
+DROP TABLE IF EXISTS cobuccio.user;
 
 CREATE TABLE IF NOT EXISTS cobuccio.user (
 	id character varying(36) COLLATE pg_catalog."default" NOT NULL DEFAULT cobuccio.uuid_generate_v4(),
@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS cobuccio.user (
 	cpf character varying(11) COLLATE pg_catalog."default" UNIQUE NOT NULL,
 	hashed_password character varying(255) COLLATE pg_catalog."default" NOT NULL,
 	birth_date date NOT NULL,
-	createdAt timestamp without time zone NOT NULL DEFAULT now(),
-	updatedAt timestamp without time zone NOT NULL DEFAULT now(),
+	created_at timestamp without time zone NOT NULL DEFAULT now(),
+  updated_at timestamp without time zone,
 	CONSTRAINT user_pkey PRIMARY KEY (id)
 ) TABLESPACE pg_default;
 

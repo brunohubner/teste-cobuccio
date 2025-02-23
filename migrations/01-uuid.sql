@@ -1,4 +1,4 @@
--- DROP FUNCTION IF EXISTS vink.uuid_generate_v4();
+DROP FUNCTION IF EXISTS vink.uuid_generate_v4();
 
 CREATE OR REPLACE FUNCTION cobuccio.uuid_generate_v4(
 	)

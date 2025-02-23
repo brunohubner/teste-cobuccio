@@ -58,7 +58,7 @@ const customFormat = winston.format((info, opts: any = {}) => {
 export const winstonConfig: WinstonModuleOptions = {
   levels: winston.config.npm.levels,
   level: process.env.LOG_LEVEL || 'verbose',
-  transports: [
+  transports: process.env.NODE_ENV === 'test' ? [] : [
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.timestamp(datetimeFormat),
@@ -71,7 +71,7 @@ export const winstonConfig: WinstonModuleOptions = {
 export const winstonConfigForMain: WinstonModuleOptions = {
   levels: winston.config.npm.levels,
   level: process.env.LOG_LEVEL || 'verbose',
-  transports: [
+  transports: process.env.NODE_ENV === 'test' ? [] : [
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.timestamp(datetimeFormat),

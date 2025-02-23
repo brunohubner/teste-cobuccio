@@ -78,12 +78,6 @@ export class UserService {
   }
 
   async signIn(dto: SigninDto) {
-    const users = await this.userRepository.findAll();
-
-    users.map((u) => u.toJSON());
-
-    console.log('🚀 ~ UserService ~ signIn ~ users:', users);
-
     const user = await this.userRepository.findOne({
       attributes: ['id', 'person_name', 'email', 'hashed_password'],
       where: {
@@ -91,8 +85,6 @@ export class UserService {
       },
       raw: true,
     });
-
-    console.log('🚀 ~ UserService ~ signIn ~ user:', user);
 
     if (!user) {
       throw this.httpException.unauthorized('Email ou senha inválidos');

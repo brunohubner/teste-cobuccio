@@ -27,7 +27,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   async set(key: string, value: any, ttl?: number) {
     if (ttl) {
-      return this.redisClient.set(key, value, 'EX', ttl);
+      return this.redisClient.set(key, value, 'PX', ttl);
     }
 
     return this.redisClient.set(key, value);

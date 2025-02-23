@@ -66,21 +66,21 @@ export class TransactionController {
 
     const locked = await this.redisService.get(lockKey);
 
-    const lockSecondsTTl = 30;
+    const lockSecondsTTl = 10;
 
     if (locked) {
-      throw this.httpException
+      throw this
+        .httpException
         .badRequest(`Aguarde ${lockSecondsTTl} segundos antes de realizar uma nova transação`);
     }
 
     await this.redisService.set(lockKey, true, lockSecondsTTl * 1000);
 
-    // const data = await this.transactionService.createTransaction(body, user);
+    const data = await this.transactionService.createTransaction(body, user);
 
-    // await this.redisService.del(lockKey);
+    await this.redisService.del(lockKey);
 
-    // return { data };
-    return { ok: true };
+    return { data };
   }
 
   @Put(':transaction_id/cancel')

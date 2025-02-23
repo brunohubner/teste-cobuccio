@@ -158,7 +158,8 @@ describe('TransactionController (e2e)', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('data');
       expect(response.body.data).toHaveProperty('transaction_id', lastTransaction);
-      expect(response.body.data).toHaveProperty('status', 'cancelled');
+      expect(response.body.data).toHaveProperty('transaction_status', 'canceled');
+      expect(response.body.data).toHaveProperty('sender_name', user1.person_name);
     });
   });
 });

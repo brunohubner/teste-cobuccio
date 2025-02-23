@@ -69,6 +69,7 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^20.10.6",
     "@types/sequelize": "^4.28.19",
+    "@types/supertest": "^6.0.2",
     "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.17.0",
     "@typescript-eslint/parser": "^6.17.0",

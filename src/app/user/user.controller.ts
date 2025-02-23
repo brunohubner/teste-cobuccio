@@ -57,7 +57,7 @@ export class UserController {
   @UsePipes(ValidationPipe)
   @HttpCode(200)
   @ApiOperation({
-    summary: 'Realizar login no sistema',
+    summary: 'Realizar login no sistema e obter token JWT',
     description: 'Realizar login no sistema informando email e senha',
   })
   @ApiResponse({
@@ -80,8 +80,8 @@ export class UserController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Consulta o saldo do usuário logado',
-    description: 'Consulta o saldo do usuário logado',
+    summary: 'Consultar o saldo do usuário autenticado',
+    description: 'Consultar o saldo do usuário autenticado',
   })
   @ApiResponse({
     status: 200,

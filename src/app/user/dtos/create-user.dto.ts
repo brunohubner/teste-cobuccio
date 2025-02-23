@@ -27,7 +27,7 @@ export class CreateUserDto {
     cpf: string;
 
   @IsEmail()
-  @ApiProperty({ example: 'joao.da.silva@domain.com' })
+  @ApiProperty({ example: 'joao@domain.com' })
     email: string;
 
   @ApiProperty({ example: '@Pass1234' })
@@ -43,7 +43,7 @@ export class CreateUserDto {
   })
     password_confirmation: string;
 
-  @ApiProperty({ example: '2025-02-01' })
+  @ApiProperty({ example: '2005-02-01' })
   @Validate(IsValidDate, {
     message: 'Data de nascimento inválida',
   })

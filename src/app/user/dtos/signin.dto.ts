@@ -6,7 +6,7 @@ import {
 
 export class SigninDto {
   @IsEmail()
-  @ApiProperty({ example: 'bruno@empresa.com' })
+  @ApiProperty({ example: 'bruno@domain.com' })
     email: string;
 
   @ApiProperty({ example: '@Pass1234' })

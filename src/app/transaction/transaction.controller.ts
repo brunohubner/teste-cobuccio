@@ -42,8 +42,8 @@ export class TransactionController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Cria uma nova transação',
-    description: 'Cria uma nova transação entre dois usuários',
+    summary: 'Criar uma nova transação (envio de saldo para outro usuário)',
+    description: 'Criar uma nova transação (envio de saldo para outro usuário)',
   })
   @ApiResponse({
     status: 201,
@@ -70,8 +70,10 @@ export class TransactionController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Cancela ultima transacaao enviada pelo usuário',
-    description: 'Tentativa de cancelar a ultima transação enviada pelo usuário',
+    summary: 'Solicitar cancelemnto da ultima transação enviada pelo usuário',
+    description: `<p>Só é possivel solicitar cancelamento da última transação enviada pelo usuário.</p>
+      </br>
+      <p>Se o usuário que recebeu o dinheiro tiver um valor menor que o valor da transação, a transação não será cancelada.</p>`,
   })
   @ApiResponse({
     status: 201,

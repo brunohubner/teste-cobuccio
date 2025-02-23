@@ -41,7 +41,7 @@ export class TransactionService {
       });
 
       if (!receiver) {
-        throw this.httpException.badRequest('Receiver não encontrado');
+        throw this.httpException.badRequest('Nenhum usuário encontrado com o CPF informado');
       }
 
       if (sender.id === receiver.id) {
@@ -53,7 +53,7 @@ export class TransactionService {
       const senderBalance = await this.getBalance(sender_id, t);
 
       if (senderBalance < amount) {
-        throw this.httpException.badRequest('Saldo insuficiente');
+        throw this.httpException.badRequest('Seu saldo é insuficiente');
       }
 
       await this.validateTransactionHistory(sender_id, t);
@@ -73,8 +73,6 @@ export class TransactionService {
         hash: '0',
         previous_hash: lastSenderTransaction?.hash ? lastSenderTransaction.hash : '0',
       };
-
-      // transactionModel.hash = TransactionService.generateHash(transactionModel);
 
       let transaction = await Transaction.create(transactionModel, { transaction: t });
 
@@ -114,11 +112,11 @@ export class TransactionService {
       });
 
       if (!transaction) {
-        throw this.httpException.badRequest('Transação não encontrada');
+        throw this.httpException.badRequest('Nenhuma transação encontrada com o ID informado');
       }
 
       if (transaction.status !== 'completed') {
-        throw this.httpException.badRequest(`Transação não pode ser cancelada. status = ${transaction.status}`);
+        throw this.httpException.badRequest(`Essa transação não pode ser cancelada. status = ${transaction.status}`);
       }
 
       const lastTransaction = await Transaction.findOne({
@@ -132,13 +130,13 @@ export class TransactionService {
       });
 
       if (lastTransaction?.id !== transaction_id) {
-        throw this.httpException.badRequest('Você só pode cancelar a última transação enviada por você');
+        throw this.httpException.badRequest('Você só pode solicitar cancelamento da última transação enviada por você');
       }
 
       const receiverBalance = await this.getBalance(transaction.receiver_id, t);
 
       if (receiverBalance < Number(transaction.amount)) {
-        throw this.httpException.badRequest('Não é possivel cancelar pois o não há saldo suficiente na conta do receiver');
+        throw this.httpException.badRequest('O usuário que recebeu o dinheiro não tem saldo suficiente para reembolsar a transação');
       }
 
       const status = 'canceled';
@@ -201,7 +199,7 @@ export class TransactionService {
       const expectedHash = TransactionService.generateHash(transaction);
 
       if (transaction.hash !== expectedHash || transaction.previous_hash !== previousHash) {
-        throw this.httpException.badRequest(`Identificado transação adulterada. id=${transaction.id}`);
+        throw this.httpException.badRequest(`Identificamos uma transação adulterada. id=${transaction.id}`);
       }
 
       previousHash = transaction.hash;

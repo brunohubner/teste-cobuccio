@@ -1,3 +1,4 @@
+-- 00-schema.sql
 DROP SCHEMA IF EXISTS cobuccio CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS cobuccio
@@ -5,6 +6,7 @@ CREATE SCHEMA IF NOT EXISTS cobuccio
 
 DROP FUNCTION IF EXISTS vink.uuid_generate_v4();
 
+-- 01-uuid.sql
 CREATE OR REPLACE FUNCTION cobuccio.uuid_generate_v4(
 	)
     RETURNS uuid
@@ -17,6 +19,7 @@ AS '$libdir/uuid-ossp', 'uuid_generate_v4'
 ALTER FUNCTION cobuccio.uuid_generate_v4()
     OWNER TO "MasterPostgres";
 
+-- 02-user.sql
 DROP TABLE IF EXISTS cobuccio.user;
 
 CREATE TABLE IF NOT EXISTS cobuccio.user (
@@ -34,6 +37,7 @@ CREATE TABLE IF NOT EXISTS cobuccio.user (
 ALTER TABLE
 	IF EXISTS cobuccio.user OWNER to "MasterPostgres";
 
+-- 03-transaction.sql
 DROP TABLE IF EXISTS cobuccio.transaction;
 
 CREATE TABLE IF NOT EXISTS cobuccio.transaction (
@@ -62,3 +66,26 @@ CREATE TABLE IF NOT EXISTS cobuccio.transaction (
 
 ALTER TABLE
 	IF EXISTS cobuccio.transaction OWNER to "MasterPostgres";
+
+-- 04-prevent-update-transaction.sql
+CREATE OR REPLACE FUNCTION prevent_transaction_update()
+
+RETURNS TRIGGER AS $$
+BEGIN
+  IF 
+    OLD.id <> NEW.id OR 
+    OLD.sender_id <> NEW.sender_id OR 
+    OLD.receiver_id <> NEW.receiver_id OR 
+    -- OLD.amount <> NEW.amount OR // comentado de propósito.
+    OLD.previous_hash <> NEW.previous_hash OR 
+    OLD.created_at <> NEW.created_at THEN
+    RAISE EXCEPTION 'Os campos id, sender_id, receiver_id, previous_hash e created_at não podem ser alterados';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER transaction_immutable_fields
+BEFORE UPDATE ON cobuccio.transaction
+FOR EACH ROW
+EXECUTE FUNCTION prevent_transaction_update();

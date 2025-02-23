@@ -1,4 +1,6 @@
 import * as path from 'path';
+import * as fs from 'fs';
+
 import { Provider } from '@nestjs/common';
 
 import { Sequelize } from 'sequelize-typescript';
@@ -36,6 +38,17 @@ export const InMemorySQLiteProvider: Provider = {
     });
 
     await sequelize.sync();
+
+    const migrationsFile = path.resolve(__dirname, '../../../migrations/migrations.sql');
+    const migrations = fs.readFileSync(migrationsFile, 'utf8');
+
+    await sequelize.query(migrations);
+
+    const seedsFile = path.resolve(__dirname, '../../../seeds/seeds.sql');
+    const seeds = fs.readFileSync(seedsFile, 'utf8');
+
+    await sequelize.query(seeds);
+
     return sequelize;
   },
 };

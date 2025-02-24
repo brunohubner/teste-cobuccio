@@ -55,7 +55,7 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.17.2
-    container_name: kibana
+    container_name: cobuccio-kibana
     # restart: always
     depends_on:
       - cobuccio-elasticsearch
@@ -70,6 +70,28 @@ services:
         soft: -1
         hard: -1
 
+
+  cobuccio-nginx:
+    image: nginx:1.27.4-alpine3.21
+    container_name: cobuccio-nginx
+    # restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    networks:
+      - cobuccio-network
+
+  cobuccio-certbot:
+    image: certbot/certbot
+    container_name: cobuccio-certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 6h & wait $${!}; certbot renew --webroot -w /var/www/certbot --quiet; done'"
 
 volumes:
   cobuccio_elasticsearch_data:

@@ -74,7 +74,7 @@ const elasticTransport = new ElasticsearchTransport({
   bufferLimit: 1000,
   flushInterval: 2000,
 
-  indexPrefix: 'cobuccio-logs2',
+  indexPrefix: 'cobuccio-logs',
   indexSuffixPattern: 'YYYY-MM-DD',
   ensureIndexTemplate: true,
 

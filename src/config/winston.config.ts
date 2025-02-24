@@ -1,4 +1,4 @@
-import { ElasticsearchTransport } from 'winston-elasticsearch';
+import { ElasticsearchTransport, LogData } from 'winston-elasticsearch';
 import * as clc from 'cli-color';
 import * as winston from 'winston';
 
@@ -74,12 +74,38 @@ const elasticTransport = new ElasticsearchTransport({
   bufferLimit: 1000,
   flushInterval: 2000,
 
+  index: 'cobuccio-logs',
   indexPrefix: 'cobuccio-logs',
   indexSuffixPattern: 'YYYY-MM-DD',
   ensureIndexTemplate: true,
 
   waitForActiveShards: 1,
   retryLimit: 3,
+
+  transformer: (logData): LogData => {
+    const result: LogData = {
+      timestamp: new Date().toISOString(),
+      level: logData?.level || 'log',
+      message: logData?.message || '',
+      meta: logData?.meta || {},
+    };
+
+    try {
+      if (isJsonString(logData.message)) {
+        const parsedMessage = JSON.parse(logData.message);
+
+        result.message = logData.message;
+        result.meta = parsedMessage;
+      } else if (typeof logData.message === 'object') {
+        result.message = JSON.stringify(logData.message);
+        result.meta = logData.message;
+      }
+    } catch (error) {
+      //
+    }
+
+    return result;
+  },
 });
 
 export const winstonConfig: WinstonModuleOptions = {

@@ -1,6 +1,6 @@
 # API Transacional Cobuccio 
 
-## https://cobuccio.brunohubner.com/docs
+## <a href="https://cobuccio.brunohubner.com/docs" target="_blank">https://cobuccio.brunohubner.com/docs</a>
 
 #### Acesse o proje no link acima, fiz deploy na AWS para caso vocês não queiram executar o projeto localmente
 

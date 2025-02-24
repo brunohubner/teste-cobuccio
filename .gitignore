@@ -41,4 +41,6 @@ lerna-debug.log*
 !.tool-versions
 
 /.postgres-data
-
+.env
+coverage/
+dist

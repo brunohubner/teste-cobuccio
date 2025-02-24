@@ -4,8 +4,6 @@
 CREATE SCHEMA IF NOT EXISTS cobuccio
   AUTHORIZATION "MasterPostgres";
 
-DROP FUNCTION IF EXISTS vink.uuid_generate_v4();
-
 -- 01-uuid.sql
 -- DROP FUNCTION IF EXISTS cobuccio.uuid_generate_v4();
 

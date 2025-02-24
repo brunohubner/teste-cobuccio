@@ -1,0 +1,14 @@
+.postgres-data/
+node_modules/
+.vscode/
+coverage/
+dist/
+build/
+logstash.conf/
+migrations/
+nginx/
+seeds/
+tests/
+test/
+tmp/
+**/**/*.tmp.*

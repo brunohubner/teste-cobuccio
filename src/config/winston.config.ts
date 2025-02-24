@@ -118,7 +118,7 @@ export const winstonConfig: WinstonModuleOptions = {
         customFormat({ colorize: !isProd }),
       ),
     }),
-    elasticTransport,
+    ...(process.env.NODE_ENV === 'production' ? [elasticTransport] : []),
   ],
 };
 
@@ -132,6 +132,6 @@ export const winstonConfigForMain: WinstonModuleOptions = {
         nestWinstonModuleUtilities.format.nestLike(),
       ),
     }),
-    elasticTransport,
+    ...(process.env.NODE_ENV === 'production' ? [elasticTransport] : []),
   ],
 };

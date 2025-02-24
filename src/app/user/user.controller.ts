@@ -67,7 +67,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Login realizado com sucesso',
-    type: Object,
+    type: CreateUserSwaggerResponse,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
   @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)

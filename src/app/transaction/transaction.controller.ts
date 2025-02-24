@@ -27,6 +27,7 @@ import { CreateTransactionSwaggerResponse } from './swagger/create-transaction.s
 import { ValidateUuidParam } from '@/shared/pipes/validate-uuid-param.pipe';
 import { RedisService } from '@/shared/redis/redis.service';
 import { HttpException } from '@/shared/errors/http/http-exception.error';
+import { CancelTransactionSwaggerResponse } from './swagger/cancel-transaction.swagger';
 
 @ApiTags('Transacoes')
 @Controller('/api/v1/transaction')
@@ -97,7 +98,7 @@ export class TransactionController {
   @ApiResponse({
     status: 201,
     description: 'Transação cancelada com sucesso',
-    type: Object,
+    type: CancelTransactionSwaggerResponse,
   })
   @ApiResponse(API_RESPONSES.BAD_REQUEST)
   @ApiResponse(API_RESPONSES.INTERNAL_SERVER_ERROR)

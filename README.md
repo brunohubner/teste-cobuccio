@@ -1,6 +1,12 @@
-# API Transacional Cobuccio
+# API Transacional Cobuccio 
 
-### Passos para execução e testes do projeto:
+## https://cobuccio.brunohubner.com/docs
+
+#### Acesse o proje no link acima, fiz deploy na AWS para caso vocês não queiram executar o projeto localmente
+
+# 
+
+### Passos para execução e testes do projeto localmente em sua máquina:
 
  - Criar arquivo `.env` baseado no `.env.example`
 ```sh
@@ -58,4 +64,8 @@ yarn stard
 
 A API está enviando todos os logs da aplicação para o Elastic Search.
 
-Todos os logs podem ser visualizados no Kibana: http://localhost:5601
+Todos os logs podem ser visualizados no Kibana
+
+produção: https://kibana.brunohubner.com
+
+local: http://localhost:5601

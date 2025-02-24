@@ -13,6 +13,7 @@
     "start": "node dist/main",
     "db:migrate": "docker exec -i cobuccio-postgres psql -U MasterPostgres -d postgres -f /migrations/migrations.sql",
     "db:seed": "docker exec -i cobuccio-postgres psql -U MasterPostgres -d postgres -f /seeds/seeds.sql",
+    "db:create-db-tests": "docker exec -i cobuccio-postgres psql -U MasterPostgres -d postgres -f /migrations/create-database-tests.sql",
     "lint": "eslint --ext .ts src/",
     "lint:fix": "eslint --ext .ts src/ --fix",
     "test": "NODE_OPTIONS='--no-warnings' jest --passWithNoTests --forceExit --detectOpenHandles --runInBand --no-cache",

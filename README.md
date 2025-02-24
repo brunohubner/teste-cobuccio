@@ -12,11 +12,16 @@ cp .env.example .env
 docker-compose up -d
 ```
 
- - Apos confirmar que o container docker está rodando executar os comando de Migrations e Seeds:
+ - Apos confirmar que o container docker está rodando executar os comando de Migrations e Seeds e criar um database novo exclusivo para a execução dos testes:
 ```sh
 yarn db:migrate
-
 yarn db:seed
+yarn db:create-db-tests
+```
+
+ - Instalar pacotes NPM:
+```sh
+yarn install
 ```
 
  - Executar testes untários:
@@ -27,6 +32,11 @@ yarn test:unit
  - Executar testes end-to-end:
 ```sh
 yarn test:e2e
+```
+
+ - Verificar cobertura de testes:
+```sh
+yarn test:cov
 ```
 
  - Rodar projeto em mode development

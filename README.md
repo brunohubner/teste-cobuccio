@@ -1,6 +1,6 @@
 # API Transacional Cobuccio
 
-Passos para execução e testes do projeto:
+### Passos para execução e testes do projeto:
 
  - Criar arquivo `.env` baseado no `.env.example`
 ```sh
@@ -34,12 +34,12 @@ yarn test:unit
 yarn test:e2e
 ```
 
- - Verificar cobertura de testes:
+ - Verificar cobertura de testes e visualizar relatório em http://127.0.0.1:3009
 ```sh
 yarn test:cov
 ```
 
- - Rodar projeto em mode development
+ - Rodar projeto em mode development e ver documentação em http://localhost:3007/docs
 ```sh
 yarn dev
 ```
@@ -49,7 +49,13 @@ yarn dev
 yarn build
 ```
 
- - Executar projeto em modo production:
+ - Executar projeto em modo production e ver documentação em http://localhost:3007/docs
 ```sh
 yarn stard
 ```
+
+## Kibana
+
+A API está enviando todos os logs da aplicação para o Elastic Search.
+
+Todos os logs podem ser visualizados no Kibana: http://localhost:5601

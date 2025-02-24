@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS cobuccio.user;
+-- DROP TABLE IF EXISTS cobuccio.user;
 
 CREATE TABLE IF NOT EXISTS cobuccio.user (
 	id character varying(36) COLLATE pg_catalog."default" NOT NULL DEFAULT cobuccio.uuid_generate_v4(),

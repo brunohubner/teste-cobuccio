@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS cobuccio.transaction;
+-- DROP TABLE IF EXISTS cobuccio.transaction;
 
 CREATE TABLE IF NOT EXISTS cobuccio.transaction (
 	id character varying(36) COLLATE pg_catalog."default" NOT NULL DEFAULT cobuccio.uuid_generate_v4(),

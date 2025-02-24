@@ -53,7 +53,7 @@ services:
     networks:
       - cobuccio-network
 
-  kibana:
+  cobuccio-kibana:
     image: docker.elastic.co/kibana/kibana:8.17.2
     container_name: cobuccio-kibana
     # restart: always

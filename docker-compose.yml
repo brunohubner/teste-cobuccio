@@ -1,16 +1,4 @@
 services:
-  cobuccio-api:
-    build:
-      context: .
-      dockerfile: nestjs.dockerfile
-    container_name: cobuccio-api:latest
-    # restart: always
-    ports:
-      - $SERVER_PORT:$SERVER_PORT
-    env_file:
-      - .env
-
-
   cobuccio-postgres:
     image: postgres:17.3-alpine3.21
     container_name: cobuccio-postgres

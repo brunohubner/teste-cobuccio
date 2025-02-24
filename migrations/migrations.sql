@@ -1,5 +1,5 @@
 -- 00-schema.sql
-DROP SCHEMA IF EXISTS cobuccio CASCADE;
+-- DROP SCHEMA IF EXISTS cobuccio CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS cobuccio
   AUTHORIZATION "MasterPostgres";
@@ -7,6 +7,8 @@ CREATE SCHEMA IF NOT EXISTS cobuccio
 DROP FUNCTION IF EXISTS vink.uuid_generate_v4();
 
 -- 01-uuid.sql
+-- DROP FUNCTION IF EXISTS cobuccio.uuid_generate_v4();
+
 CREATE OR REPLACE FUNCTION cobuccio.uuid_generate_v4(
 	)
     RETURNS uuid
@@ -20,7 +22,7 @@ ALTER FUNCTION cobuccio.uuid_generate_v4()
     OWNER TO "MasterPostgres";
 
 -- 02-user.sql
-DROP TABLE IF EXISTS cobuccio.user;
+-- DROP TABLE IF EXISTS cobuccio.user;
 
 CREATE TABLE IF NOT EXISTS cobuccio.user (
 	id character varying(36) COLLATE pg_catalog."default" NOT NULL DEFAULT cobuccio.uuid_generate_v4(),
@@ -38,7 +40,7 @@ ALTER TABLE
 	IF EXISTS cobuccio.user OWNER to "MasterPostgres";
 
 -- 03-transaction.sql
-DROP TABLE IF EXISTS cobuccio.transaction;
+-- DROP TABLE IF EXISTS cobuccio.transaction;
 
 CREATE TABLE IF NOT EXISTS cobuccio.transaction (
 	id character varying(36) COLLATE pg_catalog."default" NOT NULL DEFAULT cobuccio.uuid_generate_v4(),

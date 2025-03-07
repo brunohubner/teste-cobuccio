@@ -2,7 +2,7 @@ services:
   cobuccio-postgres:
     image: postgres:17.3-alpine3.21
     container_name: cobuccio-postgres
-    restart: always
+    # restart: always
     ports:
       - $DB_PORT:5432
     environment:
@@ -18,10 +18,11 @@ services:
     networks:
       - cobuccio-network
 
+
   cobuccio-redis:
     image: redis:7.4.2-alpine3.21
     container_name: cobuccio-redis
-    restart: always
+    # restart: always
     ports:
       - $REDIS_PORT:6379
     command: redis-server --requirepass ${REDIS_PASS}
@@ -32,7 +33,7 @@ services:
   cobuccio-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.17.2
     container_name: cobuccio-elasticsearch
-    restart: always
+    # restart: always
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
@@ -41,12 +42,7 @@ services:
       - indices.breaker.request.limit=50%
       - thread_pool.write.queue_size=1000
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
-
       - xpack.security.enabled=false
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
     volumes:
       - cobuccio_elasticsearch_data:/usr/share/elasticsearch/data
     ports:
@@ -55,10 +51,11 @@ services:
     networks:
       - cobuccio-network
 
+
   cobuccio-kibana:
     image: docker.elastic.co/kibana/kibana:8.17.2
     container_name: cobuccio-kibana
-    restart: always
+    # restart: always
     depends_on:
       - cobuccio-elasticsearch
     environment:
@@ -67,10 +64,6 @@ services:
       - $KIBANA_PORT:5601
     networks:
       - cobuccio-network
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
 
 
 volumes:
@@ -78,6 +71,7 @@ volumes:
     driver: local
   cobuccio_kibana_data:
     driver: local
+
 
 networks:
   cobuccio-network:
